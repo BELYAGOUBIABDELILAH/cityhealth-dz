@@ -427,25 +427,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Send email verification with redirect to /email-verified page
       let emailSent = false;
       try {
+        // Try with continueUrl first (works when domain is whitelisted in Firebase)
         await sendEmailVerification(newUser, {
           url: `${window.location.origin}/email-verified`,
-          handleCodeInApp: true,
         });
         emailSent = true;
-      } catch {
-        // Fallback without handleCodeInApp
-        try {
-          await sendEmailVerification(newUser, {
-            url: `${window.location.origin}/email-verified`,
-          });
-          emailSent = true;
-        } catch (retryError: any) {
-          console.warn('Email verification send failed:', retryError);
-          if (retryError?.code === 'auth/too-many-requests') {
-            toast.error("Compte créé, mais l'email de vérification est temporairement bloqué. Réessayez dans quelques minutes.");
-          } else {
-            toast.warning("Compte créé, mais l'email de vérification n'a pas pu être envoyé. Utilisez le bouton 'Renvoyer' sur la page suivante.");
+      } catch (firstError: any) {
+        // If domain not whitelisted, retry without continueUrl
+        if (firstError?.message?.includes('UNAUTHORIZED_DOMAIN') || firstError?.code === 'auth/unauthorized-continue-uri') {
+          try {
+            await sendEmailVerification(newUser);
+            emailSent = true;
+          } catch (retryError: any) {
+            console.warn('Email verification send failed (no continueUrl):', retryError);
+            if (retryError?.code === 'auth/too-many-requests') {
+              toast.error("Compte créé, mais l'email de vérification est temporairement bloqué. Réessayez dans quelques minutes.");
+            } else {
+              toast.warning("Compte créé, mais l'email de vérification n'a pas pu être envoyé. Utilisez le bouton 'Renvoyer' sur la page suivante.");
+            }
           }
+        } else if (firstError?.code === 'auth/too-many-requests') {
+          toast.error("Compte créé, mais l'email de vérification est temporairement bloqué. Réessayez dans quelques minutes.");
+        } else {
+          toast.warning("Compte créé, mais l'email de vérification n'a pas pu être envoyé. Utilisez le bouton 'Renvoyer' sur la page suivante.");
         }
       }
 

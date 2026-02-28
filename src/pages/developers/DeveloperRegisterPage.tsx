@@ -38,11 +38,19 @@ export default function DeveloperRegisterPage() {
   const handleResendEmail = async () => {
     setResending(true);
     try {
-      // Briefly sign in to get user object, send verification, then sign out
       const { user } = await signInWithEmailAndPassword(auth, email, password);
-      await sendEmailVerification(user, {
-        url: `${window.location.origin}/email-verified`,
-      });
+      try {
+        await sendEmailVerification(user, {
+          url: `${window.location.origin}/email-verified`,
+        });
+      } catch (urlError: any) {
+        // If domain not whitelisted, retry without continueUrl
+        if (urlError?.message?.includes('UNAUTHORIZED_DOMAIN') || urlError?.code === 'auth/unauthorized-continue-uri') {
+          await sendEmailVerification(user);
+        } else {
+          throw urlError;
+        }
+      }
       await auth.signOut();
       toast.success('Email de vérification renvoyé !');
     } catch (err: any) {
