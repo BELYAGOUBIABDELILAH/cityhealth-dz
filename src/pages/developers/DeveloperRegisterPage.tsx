@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { sendEmailVerification, signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { supabase } from '@/integrations/supabase/client';
 import { Eye, EyeOff, Code2, Zap, Shield, Terminal, CheckCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,7 +8,6 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 
 export default function DeveloperRegisterPage() {
-  const { signupAsCitizen, isLoading } = useAuth();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [company, setCompany] = useState('');
@@ -18,6 +15,7 @@ export default function DeveloperRegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [resending, setResending] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -27,34 +25,47 @@ export default function DeveloperRegisterPage() {
       setError('Le mot de passe doit contenir au moins 6 caractères.');
       return;
     }
+    setIsLoading(true);
     try {
-      await signupAsCitizen(email, password, fullName);
+      const { error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+            company: company || null,
+            user_type: 'developer',
+          },
+          emailRedirectTo: `${window.location.origin}/email-verified`,
+        },
+      });
+      if (signUpError) throw signUpError;
       setSuccess(true);
-    } catch {
-      setError('Erreur lors de la création du compte. Cet email est peut-être déjà utilisé.');
+    } catch (err: any) {
+      if (err?.message?.includes('already registered')) {
+        setError('Cet email est déjà utilisé.');
+      } else {
+        setError(err?.message || 'Erreur lors de la création du compte.');
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleResendEmail = async () => {
     setResending(true);
     try {
-      const { user } = await signInWithEmailAndPassword(auth, email, password);
-      try {
-        await sendEmailVerification(user, {
-          url: `${window.location.origin}/email-verified`,
-        });
-      } catch (urlError: any) {
-        // If domain not whitelisted, retry without continueUrl
-        if (urlError?.message?.includes('UNAUTHORIZED_DOMAIN') || urlError?.code === 'auth/unauthorized-continue-uri') {
-          await sendEmailVerification(user);
-        } else {
-          throw urlError;
-        }
-      }
-      await auth.signOut();
+      const { error: resendError } = await supabase.auth.resend({
+        type: 'signup',
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/email-verified`,
+        },
+      });
+      if (resendError) throw resendError;
       toast.success('Email de vérification renvoyé !');
     } catch (err: any) {
-      if (err?.code === 'auth/too-many-requests') {
+      if (err?.message?.includes('rate')) {
         toast.error('Trop de tentatives. Réessayez dans quelques minutes.');
       } else {
         toast.error("Impossible de renvoyer l'email. Vérifiez votre adresse.");
