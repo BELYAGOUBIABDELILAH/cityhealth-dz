@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
-import { Copy, Key, RefreshCw, XCircle, Plus, ArrowLeft, LogOut } from 'lucide-react';
+import { Copy, Key, RefreshCw, XCircle, Plus, ArrowLeft, LogOut, UserCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -172,6 +172,9 @@ export default function DeveloperDashboardPage() {
             <h1 className="text-2xl font-bold text-foreground">Tableau de bord Développeur</h1>
             <p className="text-muted-foreground text-sm">Gérez vos clés API CityHealth</p>
           </div>
+          <Button variant="ghost" size="sm" onClick={() => navigate('/developers/profile')}>
+            <UserCircle className="h-4 w-4 mr-1" /> Profil
+          </Button>
           <Button variant="ghost" size="sm" onClick={async () => { await supabase.auth.signOut(); navigate('/developers/login'); }}>
             <LogOut className="h-4 w-4 mr-1" /> Se déconnecter
           </Button>

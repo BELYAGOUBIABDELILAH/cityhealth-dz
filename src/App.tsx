@@ -83,6 +83,7 @@ const DeveloperDashboardPage = lazy(() => import("./pages/developers/DeveloperDa
 const DeveloperDocsPage = lazy(() => import("./pages/developers/DeveloperDocsPage"));
 const DeveloperLoginPage = lazy(() => import("./pages/developers/DeveloperLoginPage"));
 const DeveloperRegisterPage = lazy(() => import("./pages/developers/DeveloperRegisterPage"));
+const DeveloperProfilePage = lazy(() => import("./pages/developers/DeveloperProfilePage"));
 const queryClient = new QueryClient();
 
 // Loading fallback component
@@ -547,6 +548,7 @@ const AppRoutes = () => {
         <Route path="/developers/login" element={<PageTransition><DeveloperLoginPage /></PageTransition>} />
         <Route path="/developers/register" element={<PageTransition><DeveloperRegisterPage /></PageTransition>} />
         <Route path="/developers/dashboard" element={<PageTransition><DeveloperDashboardPage /></PageTransition>} />
+        <Route path="/developers/profile" element={<PageTransition><DeveloperProfilePage /></PageTransition>} />
         <Route path="/developers/docs" element={<PageTransition><DeveloperDocsPage /></PageTransition>} />
 
         {/* ============================================ */}
