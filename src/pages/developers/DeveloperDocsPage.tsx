@@ -11,7 +11,8 @@ const sections = [
   { id: 'errors', label: 'Codes d\'erreur', icon: AlertTriangle },
 ];
 
-const API_BASE = `https://lerfyjdokajfkyarlhjg.supabase.co/functions/v1/public-api`;
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://qedotqjxndtmskcgrajt.supabase.co';
+const API_BASE = `${SUPABASE_URL}/functions/v1/public-api`;
 
 function CodeBlock({ children, title }: { children: string; title?: string }) {
   return (

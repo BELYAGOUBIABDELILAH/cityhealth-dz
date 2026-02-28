@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Eye, EyeOff, Code2, Zap, Shield, Terminal, CheckCircle } from 'lucide-react';
+import { sendEmailVerification, signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+import { Eye, EyeOff, Code2, Zap, Shield, Terminal, CheckCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
 
 export default function DeveloperRegisterPage() {
   const { signupAsCitizen, isLoading } = useAuth();
@@ -15,6 +18,7 @@ export default function DeveloperRegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [resending, setResending] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,6 +35,27 @@ export default function DeveloperRegisterPage() {
     }
   };
 
+  const handleResendEmail = async () => {
+    setResending(true);
+    try {
+      // Briefly sign in to get user object, send verification, then sign out
+      const { user } = await signInWithEmailAndPassword(auth, email, password);
+      await sendEmailVerification(user, {
+        url: `${window.location.origin}/email-verified`,
+      });
+      await auth.signOut();
+      toast.success('Email de vérification renvoyé !');
+    } catch (err: any) {
+      if (err?.code === 'auth/too-many-requests') {
+        toast.error('Trop de tentatives. Réessayez dans quelques minutes.');
+      } else {
+        toast.error("Impossible de renvoyer l'email. Vérifiez votre adresse.");
+      }
+    } finally {
+      setResending(false);
+    }
+  };
+
   if (success) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background p-6">
@@ -41,9 +66,20 @@ export default function DeveloperRegisterPage() {
             Un email de vérification a été envoyé à <strong className="text-foreground">{email}</strong>. 
             Confirmez votre adresse email puis connectez-vous.
           </p>
-          <Link to="/developers/login">
-            <Button className="mt-4">Se connecter</Button>
-          </Link>
+          <Button
+            variant="outline"
+            onClick={handleResendEmail}
+            disabled={resending}
+            className="gap-2"
+          >
+            <RefreshCw className={`h-4 w-4 ${resending ? 'animate-spin' : ''}`} />
+            {resending ? 'Envoi...' : 'Renvoyer l\'email'}
+          </Button>
+          <div>
+            <Link to="/developers/login">
+              <Button className="mt-2">Se connecter</Button>
+            </Link>
+          </div>
         </div>
       </div>
     );
