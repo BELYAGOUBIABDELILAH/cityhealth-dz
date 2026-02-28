@@ -53,26 +53,22 @@ const ServiceCardItem = ({ service }: { service: ServiceCard }) => {
           handleClick();
         }
       }}
-      className="group flex-shrink-0 w-[220px] rounded-2xl border border-border bg-card overflow-hidden shadow-sm transition-all duration-200 hover:-translate-y-2 hover:shadow-xl hover:border-primary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 cursor-pointer active:scale-[0.97] mx-2.5"
+      className="group flex-shrink-0 w-[200px] rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm transition-all duration-200 hover:-translate-y-2 hover:shadow-xl hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 cursor-pointer active:scale-[0.97] mx-2.5"
       tabIndex={0}
       aria-label={`Aller à ${service.title}`}
     >
-      {/* Image area */}
-      <div className="h-[90px] bg-gradient-to-br from-primary/5 to-primary/10 flex items-center justify-center p-3">
+      {/* Image preview area — like reference cards */}
+      <div className="h-[140px] bg-muted/30 flex items-center justify-center p-4 relative overflow-hidden">
         <img
           src={service.image}
           alt={service.title}
-          className="h-full w-auto object-contain group-hover:scale-110 transition-transform duration-200"
+          className="max-h-full max-w-full object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
           loading="lazy"
         />
       </div>
-      {/* Label + description */}
-      <div className="px-3.5 py-3 border-t border-border/40 text-left space-y-1">
-        <div className="flex items-center justify-between">
-          <span className="font-semibold text-sm text-foreground leading-tight">{service.title}</span>
-          <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/50 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-200" />
-        </div>
-        <p className="text-[11px] text-muted-foreground leading-snug line-clamp-2">{service.description}</p>
+      {/* Icon + Label — bottom strip */}
+      <div className="px-3 py-2.5 border-t border-border/30 flex items-center gap-2 bg-card">
+        <span className="font-semibold text-sm text-foreground leading-tight truncate">{service.title}</span>
       </div>
     </button>
   );
