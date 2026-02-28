@@ -90,6 +90,7 @@ export const AntigravityHeader = () => {
     { label: t('footer', 'becomePartner'), description: 'Inscrivez votre établissement', href: '/provider/register', icon: UserPlus },
     { label: t('footer', 'providerDashboard'), description: 'Gérez votre profil et rendez-vous', href: '/provider/dashboard', icon: LayoutDashboard },
     { label: language === 'ar' ? 'الأسعار' : language === 'en' ? 'Pricing' : 'Tarifs', description: language === 'ar' ? 'اكتشف عروضنا' : language === 'en' ? 'Discover our plans' : 'Découvrez nos forfaits', href: '/#pricing', icon: FileText },
+    { label: language === 'ar' ? 'بوابة المطورين' : language === 'en' ? 'Developer Portal' : 'Portail développeur', description: language === 'ar' ? 'API وأدوات التكامل' : language === 'en' ? 'API & integration tools' : 'API & outils d\'intégration', href: '/developers', icon: BookOpen },
   ];
 
   const resourceItems: MegaMenuItem[] = [
