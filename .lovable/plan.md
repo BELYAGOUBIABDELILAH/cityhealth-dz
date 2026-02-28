@@ -1,55 +1,82 @@
 
-
-# Developer Portal Authentication & Fixes
+# Professional Redesign of Carte Interactive (/map)
 
 ## Overview
-Create a dedicated developer login/register flow separate from citizen auth, add logout to the dashboard, and fix the API docs URL.
+Visual-only redesign of the interactive map page to improve professionalism, visual hierarchy, spacing, and overall polish. All logic, interactions, data fetching, and features remain unchanged.
 
-## 1. Create `src/pages/developers/DeveloperLoginPage.tsx`
+## Components to Modify
 
-Split-screen layout inspired by Stripe/Vercel:
-- **Left panel**: Dark/branded sidebar with "CityHealth API" branding, tagline "Access healthcare data instantly", and feature highlights (Fast, Secure, Easy)
-- **Right panel**: Clean login form with Email + Password fields
-- Uses existing `loginAsCitizen` from AuthContext (developers are citizen-type users in Firebase -- no new user type needed, they just access the developer dashboard)
-- On successful login, redirect to `/developers/dashboard`
-- Link to `/developers/register` for new accounts
-- Password visibility toggle, validation with Zod
+### 1. `src/components/map/MapMother.tsx` - Main Layout
 
-## 2. Create `src/pages/developers/DeveloperRegisterPage.tsx`
+**Current issues**: Plain title section, basic border/shadow on map container, basic route info banner.
 
-Same split-screen layout as login:
-- **Fields**: Full Name, Email, Company/App Name (stored in profile), Password
-- Uses `signupAsCitizen` from AuthContext for Firebase registration
-- Stores company/app name in the Firestore profile (as a custom field)
-- After registration, shows email verification message
-- Link to `/developers/login` for existing accounts
+**Changes**:
+- Replace the plain title area with a compact, refined header bar featuring a subtle bottom border and improved typography (smaller subtitle, tighter spacing)
+- Upgrade the map container wrapper: softer border radius, refined shadow (`shadow-lg` to `shadow-xl`), subtle inner glow in dark mode
+- Improve the route info banner at the bottom: better card styling with glassmorphism, cleaner transport mode toggle with icon tooltips, more readable route data with better alignment
+- Add a subtle gradient overlay at the top of the map for better contrast with the floating control panel
 
-## 3. Update `src/App.tsx`
+### 2. `src/components/map/MapSidebar.tsx` - Provider List Sidebar
 
-- Add lazy imports for `DeveloperLoginPage` and `DeveloperRegisterPage`
-- Add two new routes:
-  - `/developers/login` -> `DeveloperLoginPage`
-  - `/developers/register` -> `DeveloperRegisterPage`
-- Add these paths to `hiddenPrefixes` in `ConditionalHeader` (already covered by `/developers` prefix)
+**Current issues**: Basic header, plain provider cards, cramped action buttons.
 
-## 4. Update `src/pages/developers/DeveloperLandingPage.tsx`
+**Changes**:
+- Redesign the sticky header: add a subtle gradient background, better font weight hierarchy, improved count display with a small pill badge
+- Improve provider list cards:
+  - Better avatar treatment with a subtle ring/border
+  - Cleaner name + verified badge alignment
+  - Improved type badge colors with softer, more refined palette
+  - Better address truncation with a slightly larger font
+  - More spacious action button row with better button proportions
+  - Refined selected state with a left accent border instead of just background color
+  - Smoother hover transition with subtle scale effect
+- Improve the empty state with a more refined illustration area
+- Add subtle separators between provider items
+- Improve the toggle button (when sidebar is closed) with better shadow and rounded styling
 
-- Change CTA buttons ("Obtenir une cle API", "Creer un compte developpeur") to navigate to `/developers/register` instead of `/developers/dashboard`
+### 3. `src/components/map/children/ProvidersMapChild.tsx` - Floating Control Panel
 
-## 5. Update `src/pages/developers/DeveloperDashboardPage.tsx`
+**Current issues**: Control panel has low opacity by default (opacity-40), basic search input, plain mode pills, cramped filter section.
 
-- Change unauthenticated redirect from `/citizen/login` to `/developers/login`
-- Add a "Se deconnecter" (Logout) button in the header area next to the title, using `logout` from `useAuth()`
+**Changes**:
+- Remove the low opacity default (opacity-40 hover:opacity-100 is poor UX) - keep panel always visible at full opacity with a refined glass effect
+- Redesign the search bar: remove the Menu hamburger button (unused/non-functional), make search input full-width with improved styling (rounded-xl, better placeholder, subtle focus ring)
+- Redesign mode pills: better active/inactive states with filled vs ghost styling, improved spacing, slight shadow on active pill
+- Improve the filter collapsible section: better toggle button with animated chevron, cleaner filter options with improved checkbox alignment, refined "active filters" indicator
+- Better overall card styling: refined shadow, border, and blur
 
-## 6. Fix `src/pages/developers/DeveloperDocsPage.tsx`
+### 4. `src/components/map/ProviderCard.tsx` - Selected Provider Popup
 
-- Update `API_BASE` constant from the old Supabase URL (`hozjbchgaucbfqumrhhs`) to the correct project URL: `https://lerfyjdokajfkyarlhjg.supabase.co/functions/v1/public-api`
+**Current issues**: Basic card styling, cramped info layout, plain action buttons.
 
-## Technical Details
+**Changes**:
+- Improve card elevation and styling: refined border radius (rounded-2xl), better shadow treatment, subtle border
+- Better image section: rounded corners with overflow, subtle gradient overlay at bottom of image for text readability
+- Improved info section: better typography hierarchy (name larger and bolder, type badge with refined colors), cleaner distance/rating display
+- Redesigned action buttons: more consistent sizing, primary button with better contrast, outline button with refined hover state
+- Better "view profile" link styling with subtle underline on hover
+- Smoother entrance animation
 
-- **No new user type needed**: Developers authenticate as regular Firebase users (citizen type). The developer dashboard simply checks `isAuthenticated`.
-- **Auth methods used**: `signInWithEmailAndPassword` (login), `createUserWithEmailAndPassword` via `signupAsCitizen` (register) from existing AuthContext
-- **Styling**: Tailwind CSS with dark/light mode support using existing design tokens (`bg-background`, `text-foreground`, `bg-primary`, etc.)
-- **Files created**: 2 new pages
-- **Files modified**: 4 existing files (App.tsx, DeveloperLandingPage, DeveloperDashboardPage, DeveloperDocsPage)
+### 5. `src/components/map/MapControls.tsx` - Floating Action Buttons
 
+**Current issues**: Basic round buttons, plain styling.
+
+**Changes**:
+- Improve button styling: refined shadows, subtle border, better hover effects with scale transition
+- Better visual grouping with a connected pill container instead of separate floating buttons
+- Improved AI assistant button with a subtle pulse animation when idle
+- Better dark mode contrast for the button backgrounds
+
+## Design Principles
+- All changes use existing design tokens for theme compatibility
+- RTL and multi-language support preserved
+- All event handlers, callbacks, and data flow unchanged
+- Mobile responsive behavior preserved
+- Fullscreen mode behavior preserved
+
+## Files Modified (5 files)
+1. `src/components/map/MapMother.tsx`
+2. `src/components/map/MapSidebar.tsx`
+3. `src/components/map/children/ProvidersMapChild.tsx`
+4. `src/components/map/ProviderCard.tsx`
+5. `src/components/map/MapControls.tsx`
