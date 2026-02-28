@@ -1,33 +1,63 @@
 
 
-# Fix Featured Providers Cards, Map Sidebar Scroll, and Restore Bottom Section
+# Redesign Citizen Dashboard + Fix Footer Duplicate Key
 
 ## Summary
-Three UI fixes on the homepage and interactive map:
-
-1. **Remove the "Disponible/Bientot" availability badge** from the Featured Providers cards -- the badge in the top-right corner of each card is cluttering the design and breaking the layout
-2. **Improve the Map Sidebar scrollbar** so users can smoothly scroll through all providers (remove the artificial height cap)
-3. **Confirm ProviderCTA section is visible** at the bottom of the homepage (it's already in the code -- if user is referring to it being hidden or cut off, ensure it renders correctly)
+Redesign the citizen dashboard (`PatientDashboard.tsx`) to be more service-oriented with quick access to all platform features, and fix the duplicate key console warning in the Footer.
 
 ---
 
 ## Changes
 
-### 1. FeaturedProviders -- Remove availability badge (src/components/homepage/FeaturedProviders.tsx)
+### 1. Redesign Dashboard with Quick Services Grid (src/pages/PatientDashboard.tsx)
 
-**Remove the entire availability indicator block** (lines 175-188) that renders "Disponible" or "Bientot" in the top-right corner of each card. This frees up space and keeps the card design clean.
+**Add a "Quick Services" grid** between the stats cards and the tabs section. This grid provides direct access to all platform services with icons and descriptions:
 
-Also remove the unused `isAvailable`, `nextAvailable`, and `Clock` import since they are no longer needed.
+- **Rechercher un praticien** -> `/search`
+- **Carte Interactive** -> `/map/providers`
+- **Urgences** -> `/emergency`
+- **Assistant Medical IA** -> `/medical-assistant`
+- **Don de Sang** -> `/blood-donation`
+- **Communaute** -> `/community`
+- **Annonces Medicales** -> `/annonces`
+- **Recherche Medicale** -> `/research`
+- **Mon Profil** -> `/profile`
+- **Mes Favoris** -> `/favorites`
+- **Rendez-vous** -> `/citizen/appointments`
+- **Don Gratuit** -> `/citizen/provide`
 
-### 2. Map Sidebar -- Fix scroll height (src/components/map/MapSidebar.tsx)
+Each card will be a `Link` with an icon, title, and short description, using a responsive grid (`grid-cols-2 sm:grid-cols-3 lg:grid-cols-4`).
 
-The `ScrollArea` on line 152 has `style={{ maxHeight: 'calc(4 * 160px)' }}` which caps visibility to ~4 cards. Change this to `flex-1 overflow-hidden` so the sidebar uses all available vertical space and the scroll area fills the remaining height naturally. The parent already has `h-full` and `flex flex-col`, so using `flex-1` on the ScrollArea will let it fill the space correctly.
+**Simplify the tabs section**: Keep only 3 tabs instead of 5:
+- **A venir** (upcoming appointments) -- most important
+- **Historique** (past appointments)
+- **Notifications**
 
-### 3. ProviderCTA -- Verify it renders at the bottom
+Move "Mes Avis" and "Articles Sauvegardes" into the quick services grid as links to their respective pages (reviews accessible from profile, articles from /research).
 
-The ProviderCTA is already rendered in `AntigravityIndex.tsx` at line 50 (between TestimonialsSlider and Footer). No code change needed -- it should be visible when scrolling to the bottom. If the user was referring to the section being visually broken or cut off, the existing code looks correct.
+**Improve the header**: Add a greeting based on time of day ("Bonjour/Bonsoir") and show the current date.
+
+### 2. Fix Footer Duplicate Key (src/components/Footer.tsx)
+
+The `professionalsLinks` array has two items with the same `href: '/provider/register'`, and they use `link.href` as the `key` prop. Fix by using `link.label` as key instead, on both `servicesLinks` and `professionalsLinks` loops (lines 96-103 and 113-120).
+
+---
+
+## Technical Details
+
+### PatientDashboard.tsx changes:
+- Add `quickServices` array with `{ label, description, icon, href, color }` objects
+- Render as a grid of `Link` components styled as cards with hover effects
+- Reduce `TabsList` from `grid-cols-5` to `grid-cols-3`
+- Remove `saved-articles` TabsContent and `reviews` tab (move access to profile/research pages)
+- Remove `SavedArticlesTab` component (no longer needed inline)
+- Add time-based greeting: `new Date().getHours() < 18 ? 'Bonjour' : 'Bonsoir'`
+
+### Footer.tsx changes:
+- Line 97: Change `key={link.href}` to `key={link.label}`
+- Line 113: Change `key={link.href}` to `key={link.label}`
 
 ## Files Modified
-- `src/components/homepage/FeaturedProviders.tsx` -- remove availability badge from cards
-- `src/components/map/MapSidebar.tsx` -- fix scroll area to use full available height
+- `src/pages/PatientDashboard.tsx` -- redesign dashboard layout with services grid
+- `src/components/Footer.tsx` -- fix duplicate key warning
 
