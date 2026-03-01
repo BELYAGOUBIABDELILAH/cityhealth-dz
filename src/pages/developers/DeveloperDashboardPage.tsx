@@ -44,6 +44,15 @@ export default function DeveloperDashboardPage() {
     let mounted = true;
 
     const syncSession = async () => {
+      // Handle email confirmation redirect (token exchange via URL hash)
+      const hash = window.location.hash;
+      if (hash && (hash.includes('access_token') || hash.includes('type=signup') || hash.includes('type=email'))) {
+        // Supabase client auto-exchanges tokens from the URL hash
+        await supabase.auth.getSession();
+        // Clean the URL hash
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+
       const { data: { session } } = await supabase.auth.getSession();
       if (!mounted) return;
 
