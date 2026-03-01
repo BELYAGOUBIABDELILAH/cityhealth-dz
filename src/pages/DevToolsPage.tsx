@@ -596,9 +596,12 @@ export default function DevToolsPage() {
             <RefreshCw className="h-5 w-5 text-primary" />
             <Badge variant="outline" className="border-primary text-primary">API</Badge>
           </div>
-          <CardTitle className="text-xl">Synchronisation API Publique</CardTitle>
+          <CardTitle className="text-xl">Force Sync — API Publique</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Synchronise tous les prestataires vérifiés de Firestore vers la table <code className="text-xs bg-muted px-1 rounded">providers_public</code> pour l'API publique.
+            Synchronisation manuelle immédiate des prestataires vérifiés de Firestore vers la table <code className="text-xs bg-muted px-1 rounded">providers_public</code>.
+          </p>
+          <p className="text-xs text-muted-foreground/70 mt-1">
+            ℹ️ Un cron Firebase automatique synchronise ces données toutes les 24h. Utilisez ce bouton uniquement pour forcer une mise à jour immédiate.
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -615,7 +618,7 @@ export default function DevToolsPage() {
 
           <Button onClick={syncToApi} disabled={syncing || !syncSecret.trim()} className="w-full">
             {syncing ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />}
-            {syncing ? 'Synchronisation en cours...' : 'Synchroniser tous les prestataires vers l\'API'}
+            {syncing ? 'Synchronisation en cours...' : '⚡ Force Sync — Synchroniser maintenant'}
           </Button>
 
           {syncResult && (
