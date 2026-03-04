@@ -240,7 +240,7 @@ export const MapSidebar = ({
 
   // ─── Provider List Content ───
   const ListContent = ({ maxH }: { maxH: string }) => (
-    <ScrollArea className={maxH}>
+    <div className={cn(maxH, "overflow-y-auto")}>
       {loading ? (
         <div className="p-2 space-y-2">
           {[1, 2, 3, 4, 5].map(i => (
@@ -279,7 +279,7 @@ export const MapSidebar = ({
           )}
         </div>
       )}
-    </ScrollArea>
+    </div>
   );
 
   // ─── DESKTOP: Sidebar Panel ───
