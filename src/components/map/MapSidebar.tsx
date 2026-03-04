@@ -102,8 +102,14 @@ export const MapSidebar = ({
   const tx = t[language as keyof typeof t] || t.fr;
 
   const handleProviderClick = (provider: CityHealthProvider) => {
-    setSelectedProvider(provider);
-    flyTo(provider.lat, provider.lng, 16);
+    try {
+      setSelectedProvider(provider);
+      if (provider.lat != null && provider.lng != null) {
+        flyTo(provider.lat, provider.lng, 16);
+      }
+    } catch (error) {
+      console.error('Error selecting provider:', error);
+    }
   };
 
   const handleRoute = (e: React.MouseEvent, provider: CityHealthProvider) => {
