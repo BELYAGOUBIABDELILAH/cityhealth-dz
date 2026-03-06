@@ -230,21 +230,25 @@ export const AntigravityHero = () => {
             className="flex flex-wrap justify-center gap-2.5 mb-10"
           >
             {[
-              { label: t('homepage', 'doctors'), icon: '🩺' },
-              { label: t('homepage', 'pharmacies'), icon: '💊' },
-              { label: t('homepage', 'clinics'), icon: '🏥' },
-              { label: t('homepage', 'labs'), icon: '🔬' },
+              { label: t('homepage', 'doctors'), icon: '🩺', type: 'doctor' },
+              { label: t('homepage', 'pharmacies'), icon: '💊', type: 'pharmacy' },
+              { label: t('homepage', 'clinics'), icon: '🏥', type: 'clinic' },
+              { label: t('homepage', 'labs'), icon: '🔬', type: 'lab' },
             ].map((cat, i) => (
-              <motion.span
-                key={cat.label}
+              <motion.button
+                key={cat.type}
+                type="button"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.5 + i * 0.08 }}
-                className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full text-sm font-medium text-primary"
+                whileHover={{ scale: 1.08, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate(`/search?type=${cat.type}`)}
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full text-sm font-medium text-primary hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer"
               >
                 <span>{cat.icon}</span>
                 {cat.label}
-              </motion.span>
+              </motion.button>
             ))}
           </motion.div>
 
