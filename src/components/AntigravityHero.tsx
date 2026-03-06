@@ -217,11 +217,36 @@ export const AntigravityHero = () => {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto mb-10"
+            className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto mb-8"
           >
-            {t('homepage', 'connectWith')}
-            <span className="text-foreground font-medium"> {t('homepage', 'simpleQuickFree')}</span>
+            {t('homepage', 'heroSubtitleFull')}
           </motion.p>
+
+          {/* Category Pills */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.45 }}
+            className="flex flex-wrap justify-center gap-2.5 mb-10"
+          >
+            {[
+              { label: t('homepage', 'doctors'), icon: '🩺' },
+              { label: t('homepage', 'pharmacies'), icon: '💊' },
+              { label: t('homepage', 'clinics'), icon: '🏥' },
+              { label: t('homepage', 'labs'), icon: '🔬' },
+            ].map((cat, i) => (
+              <motion.span
+                key={cat.label}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.5 + i * 0.08 }}
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full text-sm font-medium text-primary"
+              >
+                <span>{cat.icon}</span>
+                {cat.label}
+              </motion.span>
+            ))}
+          </motion.div>
 
           {/* Search Bar */}
           <motion.form 
@@ -254,7 +279,7 @@ export const AntigravityHero = () => {
               <Input
                 id="hero-search"
                 type="text"
-                placeholder={t('homepage', 'searchPlaceholder')}
+                placeholder={t('homepage', 'searchPlaceholderDetailed')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setIsFocused(true)}

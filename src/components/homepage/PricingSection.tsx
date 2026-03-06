@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Check, Crown, Star, Zap, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Check, Crown, Star, Zap, ArrowRight, ArrowLeft, Building2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,8 @@ type BillingPeriod = 'monthly' | 'annual';
 const i18n = {
   fr: {
     badge: 'Tarification transparente',
+    audienceLabel: 'Pour les professionnels de santé',
+    citizenFreeNote: 'Les citoyens naviguent et recherchent gratuitement — ces forfaits sont réservés aux praticiens souhaitant être référencés.',
     title: 'Des forfaits adaptés à vos besoins',
     subtitle: 'Tous les forfaits sont',
     subtitleBold: 'entièrement gratuits la première année',
@@ -24,6 +26,8 @@ const i18n = {
   },
   ar: {
     badge: 'أسعار شفافة',
+    audienceLabel: 'لمقدمي الرعاية الصحية',
+    citizenFreeNote: 'يتصفح المواطنون ويبحثون مجاناً — هذه الباقات مخصصة للممارسين الراغبين في التسجيل.',
     title: 'باقات مصممة لاحتياجاتك',
     subtitle: 'جميع الباقات',
     subtitleBold: 'مجانية بالكامل في السنة الأولى',
@@ -36,6 +40,8 @@ const i18n = {
   },
   en: {
     badge: 'Transparent pricing',
+    audienceLabel: 'For Healthcare Providers',
+    citizenFreeNote: 'Citizens always browse for free — these plans are for providers who want to list their practice and reach thousands of patients.',
     title: 'Plans tailored to your needs',
     subtitle: 'All plans are',
     subtitleBold: 'completely free for the first year',
@@ -123,14 +129,19 @@ export const PricingSection = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-10"
         >
-          <Badge variant="outline" className="mb-4 text-xs font-medium px-3 py-1 border-primary/20 text-primary">
-            {t.badge}
-          </Badge>
+          {/* Audience Label */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-4 bg-primary/10 border border-primary/20 rounded-full">
+            <Building2 className="h-4 w-4 text-primary" />
+            <span className="text-sm font-semibold text-primary">{t.audienceLabel}</span>
+          </div>
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3 tracking-tight">
             {t.title}
           </h2>
-          <p className="text-muted-foreground max-w-lg mx-auto text-sm leading-relaxed">
+          <p className="text-muted-foreground max-w-lg mx-auto text-sm leading-relaxed mb-2">
             {t.subtitle} <span className="font-semibold text-foreground">{t.subtitleBold}</span>{t.subtitleEnd}
+          </p>
+          <p className="text-xs text-muted-foreground/80 max-w-md mx-auto italic">
+            {t.citizenFreeNote}
           </p>
         </motion.div>
 

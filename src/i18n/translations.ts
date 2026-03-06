@@ -295,6 +295,8 @@ export interface Translations {
     connectWith: string;
     simpleQuickFree: string;
     searchPlaceholder: string;
+    searchPlaceholderDetailed: string;
+    heroSubtitleFull: string;
     searchButton: string;
     voiceSearch: string;
     myLocation: string;
@@ -1210,6 +1212,8 @@ export const translations: Record<Language, Translations> = {
       connectWith: 'Connectez-vous avec les meilleurs praticiens de santé.',
       simpleQuickFree: 'Simple, rapide et gratuit.',
       searchPlaceholder: 'Rechercher un praticien, une spécialité...',
+      searchPlaceholderDetailed: 'Rechercher par nom de médecin, spécialité, clinique…',
+      heroSubtitleFull: 'Le répertoire santé n°1 de Sidi Bel Abbès, Algérie — trouvez médecins, cliniques, pharmacies, laboratoires et plus. Gratuit pour les citoyens.',
       searchButton: 'Rechercher',
       voiceSearch: 'Recherche vocale',
       myLocation: 'Ma position',
@@ -2069,6 +2073,8 @@ export const translations: Record<Language, Translations> = {
       connectWith: 'تواصل مع أفضل الأطباء والمتخصصين.',
       simpleQuickFree: 'بسيط، سريع ومجاني.',
       searchPlaceholder: 'ابحث عن طبيب، تخصص...',
+      searchPlaceholderDetailed: 'ابحث باسم الطبيب، التخصص، العيادة…',
+      heroSubtitleFull: 'دليل الرعاية الصحية رقم 1 في سيدي بلعباس، الجزائر — اعثر على أطباء، عيادات، صيدليات، مختبرات والمزيد. مجاني للمواطنين.',
       searchButton: 'بحث',
       voiceSearch: 'البحث الصوتي',
       myLocation: 'موقعي',
@@ -2928,6 +2934,8 @@ export const translations: Record<Language, Translations> = {
       connectWith: 'Connect with the best healthcare practitioners.',
       simpleQuickFree: 'Simple, fast and free.',
       searchPlaceholder: 'Search for a practitioner, specialty...',
+      searchPlaceholderDetailed: 'Search by doctor name, specialty, clinic…',
+      heroSubtitleFull: 'The #1 healthcare directory for Sidi Bel Abbès, Algeria — find doctors, clinics, pharmacies, labs and more. Free for citizens.',
       searchButton: 'Search',
       voiceSearch: 'Voice search',
       myLocation: 'My location',
