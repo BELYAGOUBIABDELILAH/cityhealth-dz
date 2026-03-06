@@ -2934,6 +2934,8 @@ export const translations: Record<Language, Translations> = {
       connectWith: 'Connect with the best healthcare practitioners.',
       simpleQuickFree: 'Simple, fast and free.',
       searchPlaceholder: 'Search for a practitioner, specialty...',
+      searchPlaceholderDetailed: 'Search by doctor name, specialty, clinic…',
+      heroSubtitleFull: 'The #1 healthcare directory for Sidi Bel Abbès, Algeria — find doctors, clinics, pharmacies, labs and more. Free for citizens.',
       searchButton: 'Search',
       voiceSearch: 'Voice search',
       myLocation: 'My location',
