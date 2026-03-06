@@ -279,7 +279,7 @@ export const AntigravityHero = () => {
               <Input
                 id="hero-search"
                 type="text"
-                placeholder={t('homepage', 'searchPlaceholder')}
+                placeholder={t('homepage', 'searchPlaceholderDetailed')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setIsFocused(true)}

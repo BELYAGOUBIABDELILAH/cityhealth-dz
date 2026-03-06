@@ -10,6 +10,8 @@ import { PricingSection } from '@/components/homepage/PricingSection';
 import { ProviderRegistrationSection } from '@/components/homepage/ProviderRegistrationSection';
 import { EmergencyBanner } from '@/components/homepage/EmergencyBanner';
 import { AnimatedMapSection } from '@/components/homepage/AnimatedMapSection';
+import { AnnouncementBannerTop } from '@/components/homepage/AnnouncementBannerTop';
+import { EmergencyProvidersSection } from '@/components/homepage/EmergencyProvidersSection';
 import { useLanguage } from '@/hooks/useLanguage';
 
 const AntigravityIndex = () => {
@@ -21,9 +23,11 @@ const AntigravityIndex = () => {
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
+      <AnnouncementBannerTop />
       <AntigravityHero />
 
       <div id="urgences">
+        <EmergencyProvidersSection />
         <EmergencyBanner />
       </div>
 

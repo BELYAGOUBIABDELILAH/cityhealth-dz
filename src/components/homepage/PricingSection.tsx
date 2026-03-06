@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Check, Crown, Star, Zap, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Check, Crown, Star, Zap, ArrowRight, ArrowLeft, Building2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
