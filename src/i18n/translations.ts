@@ -2073,6 +2073,8 @@ export const translations: Record<Language, Translations> = {
       connectWith: 'تواصل مع أفضل الأطباء والمتخصصين.',
       simpleQuickFree: 'بسيط، سريع ومجاني.',
       searchPlaceholder: 'ابحث عن طبيب، تخصص...',
+      searchPlaceholderDetailed: 'ابحث باسم الطبيب، التخصص، العيادة…',
+      heroSubtitleFull: 'دليل الرعاية الصحية رقم 1 في سيدي بلعباس، الجزائر — اعثر على أطباء، عيادات، صيدليات، مختبرات والمزيد. مجاني للمواطنين.',
       searchButton: 'بحث',
       voiceSearch: 'البحث الصوتي',
       myLocation: 'موقعي',
