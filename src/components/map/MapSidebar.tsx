@@ -106,6 +106,8 @@ export const MapSidebar = ({
       if (provider.lat != null && provider.lng != null) {
         flyTo(provider.lat, provider.lng, 16);
       }
+      // Collapse mobile bottom sheet so the ProviderCard is visible
+      setMobileExpanded(false);
     } catch (error) {
       console.error('Error selecting provider:', error);
     }
