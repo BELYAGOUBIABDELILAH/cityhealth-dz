@@ -667,7 +667,7 @@ export const Header = () => {
                         {t('header', 'signin')}
                       </Button>
                       <Button 
-                        className="w-full bg-gradient-to-r from-primary to-accent" 
+                        className="w-full bg-primary text-primary-foreground hover:bg-primary/90" 
                         onClick={() => { 
                           navigate('/citizen/login');
                           setMobileMenuOpen(false); 
