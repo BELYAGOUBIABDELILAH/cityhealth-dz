@@ -17,6 +17,7 @@ import { ProviderDetailDialog } from '@/components/admin/ProviderDetailDialog';
 import { AdminDocUpload } from '@/components/admin/AdminDocUpload';
 import { ReportsModerationPanel } from '@/components/admin/ReportsModerationPanel';
 import { ApiManagementPanel } from '@/components/admin/ApiManagementPanel';
+import { ContactMessagesPanel } from '@/components/admin/ContactMessagesPanel';
 import { notificationService } from '@/services/notificationService';
 
 import { useAllProviders, useUpdateVerification } from '@/hooks/useProviders';
@@ -44,6 +45,7 @@ const TAB_TITLES: Record<string, string> = {
   verifications: 'Vérifications',
   ads: 'Annonces',
   users: 'Utilisateurs',
+  contact: 'Messages de contact',
   analytics: 'Analytiques',
   audit: 'Journal d\'audit',
   reports: 'Signalements',
@@ -284,6 +286,9 @@ export default function AdminDashboard() {
       
       case 'users':
         return <UserManagement />;
+      
+      case 'contact':
+        return <ContactMessagesPanel />;
       
       case 'analytics':
         return <AdminAnalyticsCharts />;
