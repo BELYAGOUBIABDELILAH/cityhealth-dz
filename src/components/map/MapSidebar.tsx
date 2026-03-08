@@ -475,9 +475,8 @@ export const MapSidebar = ({
                   id="open-now-filter"
                   checked={openOnly}
                   onCheckedChange={(checked) => updateParam('open', checked ? '1' : null)}
-                  className="h-4 w-8 [&>span]:h-3 [&>span]:w-3 data-[state=checked]:[&>span]:translate-x-4"
                 />
-                <label htmlFor="open-now-filter" className="text-[10px] font-medium text-muted-foreground flex items-center gap-1 cursor-pointer">
+                <label htmlFor="open-now-filter" className="text-[10px] font-medium text-muted-foreground flex items-center gap-1 cursor-pointer select-none">
                   <Clock className="h-3 w-3" />
                   {tx.openNow}
                 </label>
