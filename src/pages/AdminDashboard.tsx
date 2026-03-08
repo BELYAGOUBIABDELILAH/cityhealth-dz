@@ -17,6 +17,7 @@ import { ProviderDetailDialog } from '@/components/admin/ProviderDetailDialog';
 import { AdminDocUpload } from '@/components/admin/AdminDocUpload';
 import { ReportsModerationPanel } from '@/components/admin/ReportsModerationPanel';
 import { ApiManagementPanel } from '@/components/admin/ApiManagementPanel';
+import { ContactMessagesPanel } from '@/components/admin/ContactMessagesPanel';
 import { notificationService } from '@/services/notificationService';
 
 import { useAllProviders, useUpdateVerification } from '@/hooks/useProviders';
