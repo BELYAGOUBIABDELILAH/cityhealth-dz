@@ -67,9 +67,31 @@ export default function BloodDonationPage() {
   const [bloodProfile, setBloodProfile] = useState<BloodProfile>({ reminderEnabled: false });
   const [profileLoaded, setProfileLoaded] = useState(false);
   
+  // Real stats
+  const [donationCount, setDonationCount] = useState(0);
+  const [donorCount, setDonorCount] = useState(0);
+  const [centerCount, setCenterCount] = useState(0);
+
   useEffect(() => {
     const unsub = subscribeToEmergencies(setActiveEmergencies);
     return unsub;
+  }, []);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      const [donationsRes, centersRes] = await Promise.all([
+        supabase.from('donation_history').select('citizen_id'),
+        supabase.from('providers_public').select('id', { count: 'exact', head: true })
+          .or('type.eq.hospital,type.eq.blood_cabin'),
+      ]);
+      if (donationsRes.data) {
+        setDonationCount(donationsRes.data.length);
+        const unique = new Set(donationsRes.data.map(d => d.citizen_id));
+        setDonorCount(unique.size);
+      }
+      if (centersRes.count != null) setCenterCount(centersRes.count);
+    };
+    fetchStats();
   }, []);
   
   // Auto-fill from profile and donation history
