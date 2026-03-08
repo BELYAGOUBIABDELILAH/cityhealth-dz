@@ -2374,6 +2374,10 @@ export const translations: Record<Language, Translations> = {
       coFounderCTO: 'المؤسس المشارك والمدير التقني',
       descNaimi: 'مؤسس مشارك لـ CityHealth، مكرس لبناء حلول صحية رقمية متاحة للجزائر.',
       descAbdelilah: 'مؤسس مشارك ومهندس تقني لـ CityHealth، متخصص في البنى التحتية القابلة للتوسع للقطاع الطبي.',
+      support247: 'دعم 24/7',
+      errorTitle: 'خطأ',
+      errorDesc: 'حدث خطأ. يرجى المحاولة مرة أخرى.',
+      emailPlaceholder: 'بريدك@email.com',
     },
     notFound: {
       title: '404',
