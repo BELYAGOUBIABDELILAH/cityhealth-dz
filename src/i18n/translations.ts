@@ -614,6 +614,10 @@ export interface Translations {
     coFounderCTO: string;
     descNaimi: string;
     descAbdelilah: string;
+    support247: string;
+    errorTitle: string;
+    errorDesc: string;
+    emailPlaceholder: string;
   };
 
   // Not found page
