@@ -56,7 +56,7 @@ const SkeletonCard = () => (
 
 export const FeaturedProviders = () => {
   const { data: verifiedProviders = [], isLoading } = useVerifiedProviders();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [activeFilter, setActiveFilter] = useState('all');
   const scrollRef = useRef<HTMLDivElement>(null);
 
