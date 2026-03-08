@@ -236,7 +236,7 @@ export const AntigravityHero = () => {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto mb-10"
           >
-            Le répertoire de santé n°1 à Sidi Bel Abbès, Algérie — trouvez facilement médecins, cliniques, pharmacies, laboratoires et autres services médicaux.
+            {t('homepage', 'heroSubtitle')}
           </motion.p>
 
           {/* Search Bar */}
