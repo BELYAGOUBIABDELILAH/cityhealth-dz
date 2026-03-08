@@ -115,21 +115,21 @@ export const MapSidebar = ({
       noResults: 'Aucun prestataire trouvé', noResultsSub: 'Essayez de modifier vos filtres',
       route: 'Itinéraire', close: 'Masquer', open: 'Voir la liste',
       emergency247: '24/7', searchPlaceholder: 'Rechercher un prestataire...',
-      showMore: 'Voir plus', allTypes: 'Tous',
+      showMore: 'Voir plus', allTypes: 'Tous', openNow: 'Ouvert',
     },
     ar: {
       providers: 'مقدمين', provider: 'مقدم', km: 'كم',
       noResults: 'لم يتم العثور على مقدمين', noResultsSub: 'حاول تعديل الفلاتر',
       route: 'الاتجاهات', close: 'إخفاء', open: 'عرض القائمة',
       emergency247: '24/7', searchPlaceholder: 'البحث عن مقدم خدمة...',
-      showMore: 'عرض المزيد', allTypes: 'الكل',
+      showMore: 'عرض المزيد', allTypes: 'الكل', openNow: 'مفتوح',
     },
     en: {
       providers: 'providers', provider: 'provider', km: 'km',
       noResults: 'No providers found', noResultsSub: 'Try adjusting your filters',
       route: 'Directions', close: 'Hide', open: 'Show list',
       emergency247: '24/7', searchPlaceholder: 'Search providers...',
-      showMore: 'Show more', allTypes: 'All',
+      showMore: 'Show more', allTypes: 'All', openNow: 'Open now',
     },
   }), []);
 
