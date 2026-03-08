@@ -296,6 +296,7 @@ export const MapSidebar = ({
           )}
         >
           <button
+            type="button"
             onClick={() => updateParam('types', null)}
             className={cn(
               "inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-medium transition-all border whitespace-nowrap flex-shrink-0",
