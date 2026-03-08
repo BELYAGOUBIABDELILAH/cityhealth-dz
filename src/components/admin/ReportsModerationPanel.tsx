@@ -170,23 +170,32 @@ export function ReportsModerationPanel() {
     },
   });
 
-  const createMutation = (table: string, queryKey: string[]) => useMutation({
+  const updateProviderReport = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const { error } = await supabase.from(table).update({ status }).eq('id', id);
+      const { error } = await supabase.from('provider_reports').update({ status }).eq('id', id);
       if (error) throw error;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey });
-      toast({ title: 'Statut mis à jour' });
-    },
-    onError: () => {
-      toast({ title: 'Erreur', description: 'Impossible de mettre à jour le statut.', variant: 'destructive' });
-    },
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['admin-provider-reports'] }); toast({ title: 'Statut mis à jour' }); },
+    onError: () => { toast({ title: 'Erreur', description: 'Impossible de mettre à jour le statut.', variant: 'destructive' }); },
   });
 
-  const updateProviderReport = createMutation('provider_reports', ['admin-provider-reports']);
-  const updateAdReport = createMutation('ad_reports', ['admin-ad-reports']);
-  const updateCommunityReport = createMutation('community_reports', ['admin-community-reports']);
+  const updateAdReport = useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: string }) => {
+      const { error } = await supabase.from('ad_reports').update({ status }).eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['admin-ad-reports'] }); toast({ title: 'Statut mis à jour' }); },
+    onError: () => { toast({ title: 'Erreur', description: 'Impossible de mettre à jour le statut.', variant: 'destructive' }); },
+  });
+
+  const updateCommunityReport = useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: string }) => {
+      const { error } = await supabase.from('community_reports').update({ status }).eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['admin-community-reports'] }); toast({ title: 'Statut mis à jour' }); },
+    onError: () => { toast({ title: 'Erreur', description: 'Impossible de mettre à jour le statut.', variant: 'destructive' }); },
+  });
 
   const pendingCounts = {
     providers: providerReports.filter(r => r.status === 'pending').length,
