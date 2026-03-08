@@ -315,7 +315,7 @@ export default function AdminDashboard() {
         <AdminHeader 
           title={TAB_TITLES[currentTab] || 'Tableau de bord'} 
         />
-        <main className="flex-1 p-6 overflow-auto">
+        <main className="flex-1 p-5 overflow-auto">
           {dataWarningBanner}
           {renderTabContent()}
         </main>
