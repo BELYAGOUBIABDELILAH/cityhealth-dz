@@ -312,6 +312,7 @@ export const MapSidebar = ({
             const isActive = activeTypes.has(type);
             return (
               <button
+                type="button"
                 key={type}
                 onClick={() => toggleType(type)}
                 className={cn(
