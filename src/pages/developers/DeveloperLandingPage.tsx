@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Code2, Zap, Shield, Rocket, ArrowRight, Terminal, Copy, Check, Globe, Database, Lock, Clock } from 'lucide-react';
+import { Code2, Zap, Shield, Rocket, ArrowRight, Terminal, Copy, Check, Globe, Database, Lock, Clock, Hospital, Pill, MapPin, Ambulance, Link2, Stethoscope } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
