@@ -141,8 +141,8 @@ const ContactPage = () => {
             >
               <Card className="h-full border-border/50 hover:border-primary/30 transition-colors">
                 <CardContent className="p-5 text-center">
-                  <div className={`w-12 h-12 rounded-xl ${info.color} flex items-center justify-center mx-auto mb-3`}>
-                    <info.icon size={22} />
+                  <div className={`w-12 h-12 rounded-xl ${info.iconBg} flex items-center justify-center mx-auto mb-3`}>
+                    <info.icon size={22} className={info.iconColor} />
                   </div>
                   <h4 className="font-semibold text-sm mb-1">{info.title}</h4>
                   <p className="text-sm text-foreground font-medium">{info.details}</p>
