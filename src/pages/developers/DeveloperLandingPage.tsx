@@ -451,34 +451,33 @@ export default function DeveloperLandingPage() {
             </p>
           </motion.div>
 
-          {/* Partner Logos */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="flex flex-wrap items-center justify-center gap-8 md:gap-12 mb-16 py-8 px-4 rounded-2xl border border-border/30 bg-card/30 backdrop-blur-sm"
-          >
-            {[
-              { name: 'SBA MedTech', Icon: Hospital },
-              { name: 'PharmaDZ', Icon: Pill },
-              { name: 'HealthMap Pro', Icon: MapPin },
-              { name: 'DZ Emergency', Icon: Ambulance },
-              { name: 'MedConnect', Icon: Link2 },
-              { name: 'Tabib.dz', Icon: Stethoscope },
-            ].map((partner, i) => (
-              <motion.div
-                key={partner.name}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <partner.Icon className="w-6 h-6 text-primary" />
-                <span className="font-semibold text-sm md:text-base">{partner.name}</span>
-              </motion.div>
-            ))}
-          </motion.div>
+          {/* Partner Logos - Horizontal Marquee */}
+          <div className="mb-16 py-8 rounded-2xl border border-border/30 bg-card/30 backdrop-blur-sm overflow-hidden">
+            <motion.div
+              animate={{ x: ['0%', '-50%'] }}
+              transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+              className="flex items-center gap-12 w-max"
+            >
+              {[...Array(2)].flatMap((_, dupeIdx) =>
+                [
+                  { name: 'SBA MedTech', Icon: Hospital },
+                  { name: 'PharmaDZ', Icon: Pill },
+                  { name: 'HealthMap Pro', Icon: MapPin },
+                  { name: 'DZ Emergency', Icon: Ambulance },
+                  { name: 'MedConnect', Icon: Link2 },
+                  { name: 'Tabib.dz', Icon: Stethoscope },
+                ].map((partner) => (
+                  <div
+                    key={`${partner.name}-${dupeIdx}`}
+                    className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors shrink-0 px-4"
+                  >
+                    <partner.Icon className="w-6 h-6 text-primary" />
+                    <span className="font-semibold text-sm md:text-base whitespace-nowrap">{partner.name}</span>
+                  </div>
+                ))
+              )}
+            </motion.div>
+          </div>
 
           {/* Testimonial Cards */}
           <div className="grid md:grid-cols-3 gap-6">
