@@ -113,9 +113,9 @@ export const AnimatedMapSection = () => {
             <span className="text-xs text-muted-foreground font-mono hidden sm:block">carte-sante-sba.cityhealth.dz</span>
           </div>
           
-          <div className="flex flex-col md:flex-row h-[450px]">
+          <div className="flex flex-col md:flex-row md:h-[450px]">
             {/* Provider list */}
-            <div className="w-full md:w-1/3 border-b md:border-b-0 md:border-r border-border overflow-auto">
+            <div className="w-full md:w-1/3 max-h-[220px] md:max-h-none border-b md:border-b-0 md:border-r border-border overflow-auto">
               <div className="p-3">
                 <div className="flex items-center justify-between mb-3 px-2">
                   <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
@@ -184,7 +184,7 @@ export const AnimatedMapSection = () => {
             </div>
             
             {/* Map area */}
-            <div className="flex-1 relative bg-muted overflow-hidden">
+            <div className="flex-1 relative bg-muted overflow-hidden min-h-[280px]">
               <img src={sbaSatelliteMap} alt={t('homepage', 'interactiveMap')} loading="lazy" width={800} height={450} className="w-full h-full object-cover opacity-70" />
               <div className="absolute inset-0 bg-background/20" />
               
