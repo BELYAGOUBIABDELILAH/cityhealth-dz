@@ -63,8 +63,22 @@ interface AdminSidebarProps {
 
 export function AdminSidebar({ currentTab, onTabChange }: AdminSidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUnread = async () => {
+      const { count } = await supabase
+        .from('contact_messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'new');
+      setUnreadCount(count || 0);
+    };
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleLogout = async () => {
     await logout();
