@@ -2,7 +2,9 @@ import { Link } from 'react-router-dom';
 import { 
   Heart, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin,
   Stethoscope, Globe, ShieldCheck, Droplets, BookOpen, Search, Map,
-  Siren, Bot, User, UserPlus, ClipboardCheck, ArrowRight, Smartphone
+  Siren, Bot, User, UserPlus, ClipboardCheck, ArrowRight, Smartphone,
+  Users, Megaphone, FlaskConical, HandHeart, CreditCard, Code, FileText,
+  IdCard
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -12,6 +14,9 @@ import { Logo } from '@/components/ui/Logo';
 
 const Footer = () => {
   const { language, setLanguage, isRTL, t } = useLanguage();
+
+  const tri = (fr: string, en: string, ar: string) =>
+    language === 'ar' ? ar : language === 'en' ? en : fr;
 
   const socialLinks = [
     { icon: Facebook, href: 'https://facebook.com/cityhealth', label: 'Facebook' },
@@ -32,13 +37,23 @@ const Footer = () => {
     { label: t('footer', 'emergency247'), href: '/map/emergency', icon: Siren },
     { label: t('footer', 'aiAssistant'), href: '/medical-assistant', icon: Bot },
     { label: t('footer', 'bloodDonation'), href: '/blood-donation', icon: Droplets },
+    { label: tri('Carte sang', 'Blood Map', 'خريطة الدم'), href: '/map/blood', icon: Map },
+    { label: tri('Carte d\'urgence', 'Emergency Card', 'بطاقة الطوارئ'), href: '/citizen/dashboard', icon: IdCard },
+  ];
+
+  const communityLinks = [
+    { label: tri('Forum communauté', 'Community Forum', 'منتدى المجتمع'), href: '/community', icon: Users },
+    { label: tri('Entraide citoyenne', 'Community Aid', 'المساعدة المجتمعية'), href: '/citizen/provide', icon: HandHeart },
+    { label: tri('Annonces médicales', 'Medical Ads', 'الإعلانات الطبية'), href: '/annonces', icon: Megaphone },
+    { label: tri('Hub recherche', 'Research Hub', 'مركز الأبحاث'), href: '/research', icon: FlaskConical },
   ];
 
   const professionalsLinks = [
     { label: t('footer', 'becomePartner'), href: '/provider/register', icon: UserPlus },
-    { label: t('footer', 'practitionerRegistration'), href: '/provider/register', icon: ClipboardCheck },
-    { label: language === 'ar' ? 'الأسعار' : language === 'en' ? 'Pricing' : 'Tarifs', href: '/tarifs', icon: Heart },
+    { label: tri('Tarifs', 'Pricing', 'الأسعار'), href: '/tarifs', icon: CreditCard },
     { label: t('footer', 'documentation'), href: '/docs', icon: BookOpen },
+    { label: tri('Portail développeurs', 'Developer Portal', 'بوابة المطورين'), href: '/developers', icon: Code },
+    { label: tri('API Docs', 'API Docs', 'وثائق API'), href: '/developers/docs', icon: FileText },
     { label: t('footer', 'verificationCharter'), href: '/how', icon: ShieldCheck },
   ];
 
@@ -52,10 +67,10 @@ const Footer = () => {
   return (
     <footer className={`bg-muted/20 border-t border-border/40 ${isRTL ? 'rtl' : 'ltr'}`}>
       <div className="max-w-7xl mx-auto px-4 py-12 lg:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-8 lg:gap-5">
           
           {/* Column 1: Brand + Contact */}
-          <div className="lg:col-span-1">
+          <div className="sm:col-span-2 lg:col-span-1">
             <div className="mb-5">
               <Logo size="md" showText={true} showOnlineIndicator={true} />
             </div>
@@ -66,15 +81,15 @@ const Footer = () => {
 
             <div className="space-y-2 text-sm mb-5">
               <div className="flex items-center gap-2 text-muted-foreground">
-                <MapPin className="h-4 w-4 text-primary/70" />
+                <MapPin className="h-4 w-4 text-primary/70 shrink-0" />
                 <span>{t('homepage', 'locationBadge')}</span>
               </div>
               <a href="tel:+21348000000" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
-                <Phone className="h-4 w-4 text-primary/70" />
+                <Phone className="h-4 w-4 text-primary/70 shrink-0" />
                 <span dir="ltr">+213 48 XX XX XX</span>
               </a>
               <a href="mailto:contact@cityhealth.dz" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
-                <Mail className="h-4 w-4 text-primary/70" />
+                <Mail className="h-4 w-4 text-primary/70 shrink-0" />
                 <span>contact@cityhealth.dz</span>
               </a>
             </div>
@@ -95,9 +110,9 @@ const Footer = () => {
             </h4>
             <ul className="space-y-2.5">
               {servicesLinks.map((link) => (
-                <li key={link.label}>
+                <li key={link.href + link.label}>
                   <Link to={link.href} className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2 group">
-                    <link.icon className="h-3.5 w-3.5 opacity-60 group-hover:opacity-100" />
+                    <link.icon className="h-3.5 w-3.5 opacity-60 group-hover:opacity-100 shrink-0" />
                     {link.label}
                   </Link>
                 </li>
@@ -105,16 +120,33 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Column 3: Professionals */}
+          {/* Column 3: Community */}
+          <div>
+            <h4 className="font-semibold text-foreground mb-4 text-sm uppercase tracking-wide">
+              {tri('Communauté', 'Community', 'المجتمع')}
+            </h4>
+            <ul className="space-y-2.5">
+              {communityLinks.map((link) => (
+                <li key={link.href}>
+                  <Link to={link.href} className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2 group">
+                    <link.icon className="h-3.5 w-3.5 opacity-60 group-hover:opacity-100 shrink-0" />
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Column 4: Professionals */}
           <div>
             <h4 className="font-semibold text-foreground mb-4 text-sm uppercase tracking-wide">
               {t('footer', 'professionals')}
             </h4>
             <ul className="space-y-2.5">
               {professionalsLinks.map((link) => (
-                <li key={link.label}>
+                <li key={link.href + link.label}>
                   <Link to={link.href} className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2 group">
-                    <link.icon className="h-3.5 w-3.5 opacity-60 group-hover:opacity-100" />
+                    <link.icon className="h-3.5 w-3.5 opacity-60 group-hover:opacity-100 shrink-0" />
                     {link.label}
                   </Link>
                 </li>
@@ -122,7 +154,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Column 4: Login */}
+          {/* Column 5: Login */}
           <div>
             <h4 className="font-semibold text-foreground mb-4 text-sm uppercase tracking-wide">
               {t('footer', 'login')}
@@ -130,27 +162,27 @@ const Footer = () => {
             <div className="space-y-3">
               <Link to="/citizen/login" className="group block p-3 rounded-xl bg-accent/5 hover:bg-accent/10 border border-border/50 hover:border-primary/30 transition-all duration-200">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center group-hover:scale-105 transition-transform">
+                  <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
                     <User className="h-4 w-4 text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-foreground text-sm">{t('footer', 'citizenSpace')}</p>
                     <p className="text-xs text-muted-foreground truncate">{t('footer', 'patientsIndividuals')}</p>
                   </div>
-                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary rtl-flip transition-all" />
+                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary rtl-flip transition-all shrink-0" />
                 </div>
               </Link>
               
               <Link to="/provider/login" className="group block p-3 rounded-xl bg-primary/5 hover:bg-primary/10 border border-border/50 hover:border-primary/30 transition-all duration-200">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center group-hover:scale-105 transition-transform">
+                  <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
                     <Stethoscope className="h-4 w-4 text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-foreground text-sm">{t('footer', 'practitionerSpace')}</p>
                     <p className="text-xs text-muted-foreground truncate">{t('footer', 'doctorsEstablishments')}</p>
                   </div>
-                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary rtl-flip transition-all" />
+                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary rtl-flip transition-all shrink-0" />
                 </div>
               </Link>
 
@@ -163,7 +195,7 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Column 5: Legal + Language + Extension */}
+          {/* Column 6: Legal + Language + Extension */}
           <div>
             <h4 className="font-semibold text-foreground mb-4 text-sm uppercase tracking-wide">
               {t('footer', 'legal')}
@@ -186,18 +218,18 @@ const Footer = () => {
               className="group block p-3 rounded-xl bg-accent/5 hover:bg-accent/10 border border-border/50 hover:border-primary/30 transition-all duration-200 mb-5"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
                   <Globe className="h-4 w-4 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-foreground text-sm">
-                    {language === 'ar' ? 'إضافة المتصفح' : language === 'en' ? 'Browser Extension' : 'Extension Navigateur'}
+                    {tri('Extension Navigateur', 'Browser Extension', 'إضافة المتصفح')}
                   </p>
                   <p className="text-xs text-muted-foreground truncate">
-                    {language === 'ar' ? 'تحميل مجاني' : language === 'en' ? 'Free download' : 'Télécharger gratuitement'}
+                    {tri('Télécharger gratuitement', 'Free download', 'تحميل مجاني')}
                   </p>
                 </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary rtl-flip transition-all" />
+                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary rtl-flip transition-all shrink-0" />
               </div>
             </a>
 
