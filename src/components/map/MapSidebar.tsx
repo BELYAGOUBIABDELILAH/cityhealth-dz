@@ -275,6 +275,7 @@ export const MapSidebar = ({
         {/* Left arrow */}
         {canScrollLeft && (
           <button
+            type="button"
             onClick={() => scroll('left')}
             className={cn(
               "absolute top-1/2 -translate-y-1/2 z-10 h-6 w-6 rounded-full bg-card/90 border border-border/50 shadow-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-all",
@@ -295,6 +296,7 @@ export const MapSidebar = ({
           )}
         >
           <button
+            type="button"
             onClick={() => updateParam('types', null)}
             className={cn(
               "inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-medium transition-all border whitespace-nowrap flex-shrink-0",
@@ -310,6 +312,7 @@ export const MapSidebar = ({
             const isActive = activeTypes.has(type);
             return (
               <button
+                type="button"
                 key={type}
                 onClick={() => toggleType(type)}
                 className={cn(
@@ -329,6 +332,7 @@ export const MapSidebar = ({
         {/* Right arrow */}
         {canScrollRight && (
           <button
+            type="button"
             onClick={() => scroll('right')}
             className={cn(
               "absolute top-1/2 -translate-y-1/2 z-10 h-6 w-6 rounded-full bg-card/90 border border-border/50 shadow-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-all",
@@ -427,7 +431,7 @@ export const MapSidebar = ({
     <>
       {/* ─── Desktop Sidebar ─── */}
       <div className={cn(
-        "hidden md:flex flex-col w-80 flex-shrink-0 h-full bg-card z-10 overflow-hidden",
+        "hidden md:flex relative z-30 flex-col w-80 flex-shrink-0 h-full bg-card overflow-hidden pointer-events-auto",
         isRTL ? "border-r border-border/60" : "border-l border-border/60"
       )}>
         {/* Header */}
@@ -469,7 +473,7 @@ export const MapSidebar = ({
 
         {/* Type Filters + Open Now toggle */}
         {(showTypeFilters || showOpenToggle) && (
-          <div className="px-2.5 py-1.5 border-b border-border/40 space-y-1.5">
+          <div className="px-2.5 py-1.5 border-b border-border/40 space-y-1.5 pointer-events-auto" onMouseDown={(e) => e.stopPropagation()}>
             {showTypeFilters && <TypeFilters />}
             {showOpenToggle && (
               <div className="flex items-center gap-2">
@@ -557,7 +561,7 @@ const MobileBottomSheet = ({
     {/* Expandable content */}
     <div className={cn(
       "overflow-hidden transition-all duration-300",
-      mobileExpanded ? "opacity-100" : "opacity-0"
+      mobileExpanded ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
     )}>
       {/* Search */}
       <div className="px-3 pb-1.5">
@@ -579,7 +583,7 @@ const MobileBottomSheet = ({
 
       {/* Type pills + Open Now */}
       {(TypeFilters || showOpenToggle) && (
-        <div className="px-3 pb-1.5 space-y-1.5">
+        <div className="px-3 pb-1.5 space-y-1.5 pointer-events-auto" onMouseDown={(e) => e.stopPropagation()}>
           {TypeFilters && <TypeFilters />}
           {showOpenToggle && (
             <div className="flex items-center gap-2">
