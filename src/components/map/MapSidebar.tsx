@@ -465,10 +465,26 @@ export const MapSidebar = ({
           </div>
         </div>
 
-        {/* Type Filters */}
-        <div className="px-2.5 py-1.5 border-b border-border/40">
-          <TypeFilters />
-        </div>
+        {/* Type Filters + Open Now toggle */}
+        {(showTypeFilters || showOpenToggle) && (
+          <div className="px-2.5 py-1.5 border-b border-border/40 space-y-1.5">
+            {showTypeFilters && <TypeFilters />}
+            {showOpenToggle && (
+              <div className="flex items-center gap-2">
+                <Switch
+                  id="open-now-filter"
+                  checked={openOnly}
+                  onCheckedChange={(checked) => updateParam('open', checked ? '1' : null)}
+                  className="h-4 w-8 [&>span]:h-3 [&>span]:w-3 data-[state=checked]:[&>span]:translate-x-4"
+                />
+                <label htmlFor="open-now-filter" className="text-[10px] font-medium text-muted-foreground flex items-center gap-1 cursor-pointer">
+                  <Clock className="h-3 w-3" />
+                  {tx.openNow}
+                </label>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* List */}
         <ListContent maxH="flex-1" />
