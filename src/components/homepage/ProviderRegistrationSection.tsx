@@ -184,7 +184,7 @@ export const ProviderRegistrationSection = () => {
           <Link to="/provider/register">
             <Button
               size="lg"
-              className="h-14 px-10 text-base font-semibold rounded-full bg-primary hover:bg-primary/90 shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.4)] hover:shadow-[0_6px_28px_-4px_hsl(var(--primary)/0.5)] transition-all duration-300 group"
+              className="h-14 px-10 text-base font-semibold rounded-full bg-primary hover:bg-primary/90 shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.4)] hover:shadow-[0_6px_28px_-4px_hsl(var(--primary)/0.5)] transition-all duration-300 group ring-4 ring-primary/20 animate-pulse hover:animate-none"
             >
               {t.cta}
               <ArrowRight className={`${isRTL ? 'mr-2 rotate-180' : 'ml-2'} group-hover:translate-x-1.5 transition-transform duration-300`} size={18} />
