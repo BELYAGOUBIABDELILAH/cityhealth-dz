@@ -70,7 +70,7 @@ const responseExample = `{
   "meta": { "total": 42, "page": 1 }
 }`;
 
-// Stats are now fetched dynamically inside the component
+
 
 export default function DeveloperLandingPage() {
   const navigate = useNavigate();
