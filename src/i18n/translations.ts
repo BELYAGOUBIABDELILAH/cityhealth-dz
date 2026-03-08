@@ -614,6 +614,10 @@ export interface Translations {
     coFounderCTO: string;
     descNaimi: string;
     descAbdelilah: string;
+    support247: string;
+    errorTitle: string;
+    errorDesc: string;
+    emailPlaceholder: string;
   };
 
   // Not found page
@@ -1505,6 +1509,10 @@ export const translations: Record<Language, Translations> = {
       coFounderCTO: 'Co-Fondateur et Directeur Technique',
       descNaimi: 'Co-fondateur de CityHealth, dédié à la création de solutions de santé numérique accessibles pour l\'Algérie.',
       descAbdelilah: 'Co-fondateur et architecte technique de CityHealth, spécialisé dans les infrastructures scalables pour le secteur médical.',
+      support247: 'Support 24/7',
+      errorTitle: 'Erreur',
+      errorDesc: 'Une erreur est survenue. Veuillez réessayer.',
+      emailPlaceholder: 'votre@email.com',
     },
     notFound: {
       title: '404',
@@ -2366,6 +2374,10 @@ export const translations: Record<Language, Translations> = {
       coFounderCTO: 'المؤسس المشارك والمدير التقني',
       descNaimi: 'مؤسس مشارك لـ CityHealth، مكرس لبناء حلول صحية رقمية متاحة للجزائر.',
       descAbdelilah: 'مؤسس مشارك ومهندس تقني لـ CityHealth، متخصص في البنى التحتية القابلة للتوسع للقطاع الطبي.',
+      support247: 'دعم 24/7',
+      errorTitle: 'خطأ',
+      errorDesc: 'حدث خطأ. يرجى المحاولة مرة أخرى.',
+      emailPlaceholder: 'بريدك@email.com',
     },
     notFound: {
       title: '404',
@@ -3227,6 +3239,10 @@ export const translations: Record<Language, Translations> = {
       coFounderCTO: 'Co-Founder and Chief Technology Officer',
       descNaimi: 'Co-founder of CityHealth, dedicated to building accessible digital health solutions for Algeria.',
       descAbdelilah: 'Co-founder and technical architect of CityHealth, specialized in scalable infrastructure for the medical sector.',
+      support247: 'Support 24/7',
+      errorTitle: 'Error',
+      errorDesc: 'An error occurred. Please try again.',
+      emailPlaceholder: 'your@email.com',
     },
     notFound: {
       title: '404',

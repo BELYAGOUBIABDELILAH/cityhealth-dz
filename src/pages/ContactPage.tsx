@@ -114,8 +114,8 @@ const ContactPage = () => {
       console.error('Contact form error:', err);
       addToast({
         type: 'error',
-        title: 'Erreur',
-        message: 'Une erreur est survenue. Veuillez réessayer.',
+        title: t('contact', 'errorTitle'),
+        message: t('contact', 'errorDesc'),
       });
     } finally {
       setIsSubmitting(false);
@@ -135,7 +135,7 @@ const ContactPage = () => {
         <motion.div initial="hidden" animate="visible" custom={0} variants={fadeUp}>
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
             <MessageSquare size={14} />
-            Support 24/7
+            {t('contact', 'support247')}
           </span>
         </motion.div>
 
@@ -223,7 +223,7 @@ const ContactPage = () => {
                       </div>
                       <div className="space-y-2">
                         <label className="text-sm font-medium">{t('contact', 'email')} *</label>
-                        <Input type="email" name="email" value={formData.email} onChange={handleInputChange} placeholder="votre@email.com" required className="focus:ring-primary/30 transition-shadow focus:shadow-[0_0_0_3px_hsl(var(--primary)/0.1)]" />
+                        <Input type="email" name="email" value={formData.email} onChange={handleInputChange} placeholder={t('contact', 'emailPlaceholder')} required className="focus:ring-primary/30 transition-shadow focus:shadow-[0_0_0_3px_hsl(var(--primary)/0.1)]" />
                       </div>
                     </div>
 
