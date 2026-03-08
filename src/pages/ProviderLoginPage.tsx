@@ -18,12 +18,10 @@ const features = [
 
 const ProviderLoginPage = () => {
   const navigate = useNavigate();
-  const { loginAsProvider, isAuthenticated, profile, isLoading: authLoading } = useAuth();
+  const { loginAsProvider, loginWithGoogle, isAuthenticated, profile, isLoading: authLoading } = useAuth();
   const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const [forgotEmail, setForgotEmail] = useState('');
-  const [forgotEmailSent, setForgotEmailSent] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   
   const [email, setEmail] = useState('');
