@@ -427,7 +427,7 @@ export const MapSidebar = ({
     <>
       {/* ─── Desktop Sidebar ─── */}
       <div className={cn(
-        "hidden md:flex flex-col w-80 flex-shrink-0 h-full bg-card z-10 overflow-hidden",
+        "hidden md:flex relative z-30 flex-col w-80 flex-shrink-0 h-full bg-card overflow-hidden pointer-events-auto",
         isRTL ? "border-r border-border/60" : "border-l border-border/60"
       )}>
         {/* Header */}
