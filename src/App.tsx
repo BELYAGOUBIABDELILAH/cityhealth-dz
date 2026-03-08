@@ -601,6 +601,7 @@ const App = () => (
                   <div className="min-h-screen bg-background text-foreground">
                     <ConditionalHeader />
                     <AppRoutes />
+                    <BackToTop />
                   </div>
                 </BrowserRouter>
               </TooltipProvider>
