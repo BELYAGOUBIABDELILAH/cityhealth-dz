@@ -11,10 +11,11 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from '@/components/ui/dialog';
-import { Search, Mail, Eye, CheckCircle, Clock, Archive, Loader2, MessageSquare, RefreshCw } from 'lucide-react';
+import { Search, Mail, Eye, CheckCircle, Clock, Archive, Loader2, MessageSquare, RefreshCw, Save, Phone, MapPin, Settings2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
+import { Label } from '@/components/ui/label';
 
 interface ContactMessage {
   id: string;
