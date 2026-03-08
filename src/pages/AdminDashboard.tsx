@@ -63,16 +63,8 @@ export default function AdminDashboard() {
   const { user } = useAuth();
   const [currentTab, setCurrentTab] = useState('overview');
   const [searchQuery, setSearchQuery] = useState('');
-  const [adminNotifCount, setAdminNotifCount] = useState(0);
   const [selectedProvider, setSelectedProvider] = useState<CityHealthProvider | null>(null);
   const [statusFilter, setStatusFilter] = useState<ProviderStatusFilter>('all');
-
-  const { data: allProviders = [], isLoading: loadingAll, isError: errorAll } = useAllProviders();
-  const updateVerification = useUpdateVerification();
-
-  useEffect(() => {
-    getUnreadCount().then(setAdminNotifCount).catch(() => setAdminNotifCount(0));
-  }, []);
 
   const handleApprove = async (id: string) => {
     const provider = allProviders.find(p => p.id === id);
