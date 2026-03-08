@@ -51,17 +51,18 @@ export async function getAllCitizens(): Promise<CitizenUser[]> {
       const data = docSnap.data();
       const fullName = data.fullName || data.displayName || data.name || data.email?.split('@')[0] || 'Utilisateur';
       return {
-      id: docSnap.id,
-      email: data.email || '',
-      fullName,
-      phone: docSnap.data().phone,
-      avatarUrl: docSnap.data().avatarUrl,
-      status: docSnap.data().status || 'active',
-      appointmentsCount: docSnap.data().appointmentsCount || 0,
-      favoritesCount: docSnap.data().favoritesCount || 0,
-      createdAt: docSnap.data().createdAt || Timestamp.now(),
-      lastLoginAt: docSnap.data().lastLoginAt,
-    }));
+        id: docSnap.id,
+        email: data.email || '',
+        fullName,
+        phone: data.phone,
+        avatarUrl: data.avatarUrl,
+        status: data.status || 'active',
+        appointmentsCount: data.appointmentsCount || 0,
+        favoritesCount: data.favoritesCount || 0,
+        createdAt: data.createdAt || Timestamp.now(),
+        lastLoginAt: data.lastLoginAt,
+      };
+    });
   } catch (error) {
     console.error('Failed to get citizens:', error);
     return [];
