@@ -1,4 +1,5 @@
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback, useRef, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import L from 'leaflet';
 import 'leaflet.markercluster';
 import { AlertTriangle } from 'lucide-react';
@@ -10,6 +11,7 @@ import { createMarkerIcon } from '../MapMarkers';
 import { CityHealthProvider } from '@/data/providers';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useProviderDistances } from '@/hooks/useProviderDistances';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 
 const EmergencyMapChild = () => {
   const {
