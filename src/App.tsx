@@ -15,6 +15,7 @@ import { CitizenGuard } from "@/components/guards/CitizenGuard";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AntigravityHeader } from "./components/AntigravityHeader";
+import BackToTop from "./components/BackToTop";
 
 // Conditional header - hidden on pages with their own navigation
 const ConditionalHeader = () => {
