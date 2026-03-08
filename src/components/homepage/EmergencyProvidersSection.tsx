@@ -63,7 +63,7 @@ export const EmergencyProvidersSection = () => {
         </motion.div>
 
         {/* Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        <div className="flex overflow-x-auto gap-4 mb-6 pb-2 scrollbar-none snap-x snap-mandatory -mx-4 px-4">
           {emergencyProviders.map((provider, index) => (
             <motion.div
               key={provider.phone}
@@ -71,7 +71,7 @@ export const EmergencyProvidersSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="group relative rounded-2xl border-2 border-destructive/20 bg-card p-5 hover:border-destructive/40 hover:shadow-lg hover:shadow-destructive/5 transition-all"
+              className="group relative rounded-2xl border-2 border-destructive/20 bg-card p-5 hover:border-destructive/40 hover:shadow-lg hover:shadow-destructive/5 transition-all min-w-[280px] w-[85vw] sm:w-[320px] lg:w-[340px] flex-shrink-0 snap-start"
             >
               {/* Status dot */}
               <div className="absolute top-4 right-4 flex items-center gap-1.5">
