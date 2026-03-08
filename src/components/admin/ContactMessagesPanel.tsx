@@ -11,10 +11,11 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from '@/components/ui/dialog';
-import { Search, Mail, Eye, CheckCircle, Clock, Archive, Loader2, MessageSquare, RefreshCw } from 'lucide-react';
+import { Search, Mail, Eye, CheckCircle, Clock, Archive, Loader2, MessageSquare, RefreshCw, Save, Phone, MapPin, Settings2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
+import { Label } from '@/components/ui/label';
 
 interface ContactMessage {
   id: string;
@@ -43,6 +44,11 @@ export function ContactMessagesPanel() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(null);
 
+  // Contact settings state
+  const [settings, setSettings] = useState<Record<string, string>>({});
+  const [settingsLoading, setSettingsLoading] = useState(true);
+  const [savingSettings, setSavingSettings] = useState(false);
+
   const fetchMessages = async () => {
     setLoading(true);
     const { data, error } = await supabase
@@ -59,8 +65,38 @@ export function ContactMessagesPanel() {
     setLoading(false);
   };
 
+  const fetchSettings = async () => {
+    setSettingsLoading(true);
+    const { data, error } = await supabase
+      .from('contact_settings')
+      .select('*');
+    if (!error && data) {
+      const map: Record<string, string> = {};
+      data.forEach((row: any) => { map[row.key] = row.value; });
+      setSettings(map);
+    }
+    setSettingsLoading(false);
+  };
+
+  const saveSettings = async () => {
+    setSavingSettings(true);
+    try {
+      for (const [key, value] of Object.entries(settings)) {
+        await supabase
+          .from('contact_settings')
+          .update({ value, updated_at: new Date().toISOString() })
+          .eq('key', key);
+      }
+      toast({ title: 'Informations mises à jour', description: 'Les coordonnées de contact ont été sauvegardées.' });
+    } catch {
+      toast({ title: 'Erreur', description: 'Impossible de sauvegarder.', variant: 'destructive' });
+    }
+    setSavingSettings(false);
+  };
+
   useEffect(() => {
     fetchMessages();
+    fetchSettings();
   }, []);
 
   const updateStatus = async (id: string, newStatus: string) => {
@@ -105,6 +141,114 @@ export function ContactMessagesPanel() {
 
   return (
     <div className="space-y-6">
+      {/* Contact Info Editor */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Settings2 className="h-5 w-5 text-primary" />
+            Informations de contact (affichées sur la page)
+          </CardTitle>
+          <CardDescription>
+            Modifiez les coordonnées affichées publiquement sur la page Contact.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {settingsLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-5 w-5 animate-spin text-primary" />
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-1.5 text-sm">
+                    <Phone className="h-3.5 w-3.5 text-muted-foreground" />
+                    Téléphone
+                  </Label>
+                  <Input
+                    value={settings.phone || ''}
+                    onChange={(e) => setSettings(s => ({ ...s, phone: e.target.value }))}
+                    placeholder="+213 48 XX XX XX"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm text-muted-foreground">Horaires téléphone</Label>
+                  <Input
+                    value={settings.phone_hours || ''}
+                    onChange={(e) => setSettings(s => ({ ...s, phone_hours: e.target.value }))}
+                    placeholder="Disponible 8h-20h"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-1.5 text-sm">
+                    <Mail className="h-3.5 w-3.5 text-muted-foreground" />
+                    Email
+                  </Label>
+                  <Input
+                    value={settings.email || ''}
+                    onChange={(e) => setSettings(s => ({ ...s, email: e.target.value }))}
+                    placeholder="contact@cityhealth-sba.dz"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm text-muted-foreground">Délai de réponse</Label>
+                  <Input
+                    value={settings.email_response || ''}
+                    onChange={(e) => setSettings(s => ({ ...s, email_response: e.target.value }))}
+                    placeholder="Réponse sous 24h"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-1.5 text-sm">
+                    <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
+                    Adresse
+                  </Label>
+                  <Input
+                    value={settings.address || ''}
+                    onChange={(e) => setSettings(s => ({ ...s, address: e.target.value }))}
+                    placeholder="Sidi Bel Abbès, Algérie"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm text-muted-foreground">Ville / Wilaya</Label>
+                  <Input
+                    value={settings.address_city || ''}
+                    onChange={(e) => setSettings(s => ({ ...s, address_city: e.target.value }))}
+                    placeholder="Wilaya de Sidi Bel Abbès"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-1.5 text-sm">
+                    <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                    Horaires (semaine)
+                  </Label>
+                  <Input
+                    value={settings.working_hours || ''}
+                    onChange={(e) => setSettings(s => ({ ...s, working_hours: e.target.value }))}
+                    placeholder="Dim - Jeu: 8h - 17h"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm text-muted-foreground">Horaires (samedi)</Label>
+                  <Input
+                    value={settings.saturday_hours || ''}
+                    onChange={(e) => setSettings(s => ({ ...s, saturday_hours: e.target.value }))}
+                    placeholder="Sam: 8h - 12h"
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end">
+                <Button onClick={saveSettings} disabled={savingSettings}>
+                  {savingSettings ? <Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> : <Save className="h-4 w-4 mr-1.5" />}
+                  Sauvegarder
+                </Button>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Messages Table */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
