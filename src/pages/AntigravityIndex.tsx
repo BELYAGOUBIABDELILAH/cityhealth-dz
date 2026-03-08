@@ -55,16 +55,16 @@ const AntigravityIndex = () => {
           <TestimonialsSlider />
         </div>
 
-        <div id="pricing">
-          <PricingSection />
-        </div>
-
         <div id="annonces">
           <div id="publicite">
             <div id="inscription-provider">
               <ProviderRegistrationSection />
             </div>
           </div>
+        </div>
+
+        <div id="pricing">
+          <PricingSection />
         </div>
       </Suspense>
 

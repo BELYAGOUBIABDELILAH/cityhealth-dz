@@ -1,26 +1,50 @@
 
 
-# Improve Visibility of Provider Registration Section on Homepage
+## Analysis
 
-## Current State
-The `ProviderRegistrationSection` is present on the homepage (`AntigravityIndex.tsx`) but sits at the very bottom (after Pricing, before Footer) with a subtle `bg-muted/30` background that blends into the page. It lacks strong visual contrast to grab attention.
+After reviewing the codebase, here's the current state:
+
+### 1. Developer Email Verification (Already Supabase-based)
+The developer portal uses **Supabase Auth** (not Firebase), as established in a previous migration. The current flow:
+- `DeveloperRegisterPage.tsx` calls `supabase.auth.signUp()` with `emailRedirectTo: /developers/login`
+- `DeveloperLoginPage.tsx` already handles the email confirmation callback (lines 20-41), detects `access_token` in the URL hash, and redirects to `/developers/dashboard`
+- `DeveloperDashboardPage.tsx` uses `supabase.auth.getSession()` to gate access
+
+**Issue**: The user mentions Firebase's `createUserWithEmailAndPassword` and Firestore `developers` collection, but the developer portal was intentionally migrated to Supabase to avoid Firebase domain authorization errors on preview environments. The current Supabase flow is correct and functional.
+
+**What actually needs fixing**: The redirect URL should point to `/developers/dashboard` directly (not `/developers/login`) so that after email confirmation, the user lands on the dashboard automatically. The login page callback handler works but adds an unnecessary intermediary step.
+
+### 2. Firebase Cron Sync Script
+Create `scripts/firebase-cron-sync.js` containing a Firebase Scheduled Cloud Function using `functions.pubsub.schedule('every 24 hours')` that:
+- Queries Firestore for verified providers
+- Maps to public fields
+- POSTs to the `sync-provider` edge function
+
+### 3. Dev-Tools "Force Sync" Label
+Update the sync card in `DevToolsPage.tsx` to clearly indicate it's a manual "Force Sync" distinct from the automated 24h cycle.
 
 ## Plan
 
-### 1. Boost visual contrast in `ProviderRegistrationSection.tsx`
-- Replace the subtle `bg-muted/30` background with a stronger gradient — e.g. `bg-gradient-to-br from-primary/10 via-background to-primary/5` with a visible top/bottom border accent
-- Add a decorative top border or divider (colored line) to clearly separate it from the Pricing section above
-- Make the CTA button pulse with a subtle `animate-pulse` ring or glow to draw the eye
+### Task 1: Fix Developer Email Redirect
+**File**: `src/pages/developers/DeveloperRegisterPage.tsx`
+- Change `emailRedirectTo` from `/developers/login` to `/developers/dashboard`
+- Same change in the resend handler
+- This way, after clicking the confirmation link, the user lands directly on their dashboard
 
-### 2. Reposition higher on the homepage in `AntigravityIndex.tsx`
-- Move the `ProviderRegistrationSection` **above** the Pricing section (or right after Testimonials) so it appears earlier during scroll, increasing the chance users see it
-- Current order: Testimonials → Pricing → ProviderRegistration
-- New order: Testimonials → **ProviderRegistration** → Pricing
+**File**: `src/pages/developers/DeveloperDashboardPage.tsx`
+- Add URL hash detection (same pattern as login page) to handle the email confirmation token exchange when users land directly on the dashboard from the email link
 
-### 3. Add a mini floating CTA banner
-- Add a small sticky/fixed banner or a "Provider? Join us" mini-link in the header or after the hero that anchors to `#inscription-provider`, giving an additional entry point to the section
+### Task 2: Create Firebase Cron Sync Script
+**New file**: `scripts/firebase-cron-sync.js`
+- Complete Node.js Firebase Cloud Function using `functions.pubsub.schedule('every 24 hours')`
+- Fetches verified providers from Firestore
+- Maps to safe public fields matching the `providers_public` schema
+- POSTs batch to `/functions/v1/sync-provider` with `x-sync-secret`
+- Includes deployment instructions as comments
 
-### Files Modified
-- `src/components/homepage/ProviderRegistrationSection.tsx` — stronger background, border accent, CTA glow
-- `src/pages/AntigravityIndex.tsx` — reorder sections to place registration higher
+### Task 3: Update Dev-Tools Sync Button
+**File**: `src/pages/DevToolsPage.tsx`
+- Rename the card title to "Force Sync — API Publique"
+- Update description to explain this is for immediate updates outside the 24h automated cycle
+- Add a small info note about the automated cron schedule
 

@@ -83,9 +83,9 @@ export const ProviderRegistrationSection = () => {
   const t = content[language];
 
   return (
-    <section className={`py-20 md:py-28 px-4 relative overflow-hidden ${isRTL ? 'rtl' : 'ltr'}`}>
-      <div className="absolute inset-0 bg-muted/30" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/[0.04] rounded-full blur-3xl" />
+    <section className={`py-20 md:py-28 px-4 relative overflow-hidden border-t-4 border-primary/30 ${isRTL ? 'rtl' : 'ltr'}`}>
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-primary/5" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/[0.08] rounded-full blur-3xl" />
 
       <div className="container mx-auto max-w-6xl relative z-10">
         {/* Header */}
@@ -184,7 +184,7 @@ export const ProviderRegistrationSection = () => {
           <Link to="/provider/register">
             <Button
               size="lg"
-              className="h-14 px-10 text-base font-semibold rounded-full bg-primary hover:bg-primary/90 shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.4)] hover:shadow-[0_6px_28px_-4px_hsl(var(--primary)/0.5)] transition-all duration-300 group"
+              className="h-14 px-10 text-base font-semibold rounded-full bg-primary hover:bg-primary/90 shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.4)] hover:shadow-[0_6px_28px_-4px_hsl(var(--primary)/0.5)] transition-all duration-300 group ring-4 ring-primary/20 animate-pulse hover:animate-none"
             >
               {t.cta}
               <ArrowRight className={`${isRTL ? 'mr-2 rotate-180' : 'ml-2'} group-hover:translate-x-1.5 transition-transform duration-300`} size={18} />
