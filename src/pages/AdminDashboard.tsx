@@ -314,7 +314,6 @@ export default function AdminDashboard() {
       <div className="flex-1 flex flex-col min-w-0">
         <AdminHeader 
           title={TAB_TITLES[currentTab] || 'Tableau de bord'} 
-          notificationCount={adminNotifCount}
         />
         <main className="flex-1 p-6 overflow-auto">
           {dataWarningBanner}
