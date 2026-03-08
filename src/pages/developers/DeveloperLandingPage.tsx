@@ -434,12 +434,12 @@ export default function DeveloperLandingPage() {
             className="flex flex-wrap items-center justify-center gap-8 md:gap-12 mb-16 py-8 px-4 rounded-2xl border border-border/30 bg-card/30 backdrop-blur-sm"
           >
             {[
-              { name: 'SBA MedTech', icon: '🏥' },
-              { name: 'PharmaDZ', icon: '💊' },
-              { name: 'HealthMap Pro', icon: '🗺️' },
-              { name: 'DZ Emergency', icon: '🚑' },
-              { name: 'MedConnect', icon: '🔗' },
-              { name: 'Tabib.dz', icon: '👨‍⚕️' },
+              { name: 'SBA MedTech', Icon: Hospital },
+              { name: 'PharmaDZ', Icon: Pill },
+              { name: 'HealthMap Pro', Icon: MapPin },
+              { name: 'DZ Emergency', Icon: Ambulance },
+              { name: 'MedConnect', Icon: Link2 },
+              { name: 'Tabib.dz', Icon: Stethoscope },
             ].map((partner, i) => (
               <motion.div
                 key={partner.name}
