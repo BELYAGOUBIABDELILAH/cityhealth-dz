@@ -135,7 +135,7 @@ const ContactPage = () => {
         <motion.div initial="hidden" animate="visible" custom={0} variants={fadeUp}>
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
             <MessageSquare size={14} />
-            Support 24/7
+            {t('contact', 'support247')}
           </span>
         </motion.div>
 
