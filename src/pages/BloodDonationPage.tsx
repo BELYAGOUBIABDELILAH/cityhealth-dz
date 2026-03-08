@@ -368,9 +368,9 @@ export default function BloodDonationPage() {
           {/* Hero stats */}
           <div className="grid grid-cols-3 gap-4 max-w-lg mx-auto">
             {[
-              { value: '1,200+', label: tx.heroStat1 },
-              { value: '850+', label: tx.heroStat2 },
-              { value: '12', label: tx.heroStat3 },
+              { value: donationCount > 0 ? `${donationCount}+` : '—', label: tx.heroStat1 },
+              { value: donorCount > 0 ? `${donorCount}+` : '—', label: tx.heroStat2 },
+              { value: centerCount > 0 ? String(centerCount) : '—', label: tx.heroStat3 },
             ].map((stat, i) => (
               <div key={i} className="text-center">
                 <p className="text-2xl md:text-3xl font-bold text-white">{stat.value}</p>
