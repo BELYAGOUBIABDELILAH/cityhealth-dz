@@ -44,6 +44,11 @@ export function ContactMessagesPanel() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(null);
 
+  // Contact settings state
+  const [settings, setSettings] = useState<Record<string, string>>({});
+  const [settingsLoading, setSettingsLoading] = useState(true);
+  const [savingSettings, setSavingSettings] = useState(false);
+
   const fetchMessages = async () => {
     setLoading(true);
     const { data, error } = await supabase
