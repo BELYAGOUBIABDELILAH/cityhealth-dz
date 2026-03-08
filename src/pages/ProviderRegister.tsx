@@ -1,6 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Save } from 'lucide-react';
+import { Save, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { DynamicProgressBar } from '@/components/provider/registration/DynamicProgressBar';
 import { Step1EliteIdentity } from '@/components/provider/registration/Step1EliteIdentity';
 import { Step2BasicInfo } from '@/components/provider/registration/Step2BasicInfo';
@@ -21,6 +22,7 @@ const STEPS = [
 ];
 
 export default function ProviderRegister() {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const { 
     formData, 
@@ -46,6 +48,17 @@ export default function ProviderRegister() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-secondary/10 py-8 px-4">
       <div className="max-w-4xl mx-auto">
+        {/* Back Button */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate('/')}
+          className="mb-4"
+        >
+          <ArrowLeft className="h-4 w-4 mr-1" />
+          Retour
+        </Button>
+
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent mb-2">
