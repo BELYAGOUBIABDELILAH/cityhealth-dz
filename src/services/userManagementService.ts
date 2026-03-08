@@ -47,10 +47,13 @@ export async function getAllCitizens(): Promise<CitizenUser[]> {
       query(collection(db, 'citizens'), orderBy('createdAt', 'desc'))
     );
     
-    return citizensSnap.docs.map(docSnap => ({
+    return citizensSnap.docs.map(docSnap => {
+      const data = docSnap.data();
+      const fullName = data.fullName || data.displayName || data.name || data.email?.split('@')[0] || 'Utilisateur';
+      return {
       id: docSnap.id,
-      email: docSnap.data().email || '',
-      fullName: docSnap.data().fullName || docSnap.data().displayName,
+      email: data.email || '',
+      fullName,
       phone: docSnap.data().phone,
       avatarUrl: docSnap.data().avatarUrl,
       status: docSnap.data().status || 'active',
