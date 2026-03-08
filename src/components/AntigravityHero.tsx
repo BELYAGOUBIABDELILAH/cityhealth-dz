@@ -62,27 +62,46 @@ export const AntigravityHero = () => {
     { value: '4.9', label: t('homepage', 'averageRating'), icon: Star },
   ];
 
-  // Mouse tracking for interactive background
+  // Mouse tracking for interactive background — cached rect to avoid forced reflow
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const springX = useSpring(mouseX, { stiffness: 50, damping: 20 });
   const springY = useSpring(mouseY, { stiffness: 50, damping: 20 });
+  const cachedRect = useRef<DOMRect | null>(null);
+  const rafId = useRef<number>(0);
+
+  const updateRect = useCallback(() => {
+    if (containerRef.current) {
+      cachedRect.current = containerRef.current.getBoundingClientRect();
+    }
+  }, []);
 
   useEffect(() => {
+    updateRect();
+    window.addEventListener('resize', updateRect, { passive: true });
+    window.addEventListener('scroll', updateRect, { passive: true });
+
     const handleMouseMove = (e: MouseEvent) => {
-      if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        mouseX.set(e.clientX - rect.left);
-        mouseY.set(e.clientY - rect.top);
-      }
+      cancelAnimationFrame(rafId.current);
+      rafId.current = requestAnimationFrame(() => {
+        if (cachedRect.current) {
+          mouseX.set(e.clientX - cachedRect.current.left);
+          mouseY.set(e.clientY - cachedRect.current.top);
+        }
+      });
     };
 
     const container = containerRef.current;
     if (container) {
-      container.addEventListener('mousemove', handleMouseMove);
-      return () => container.removeEventListener('mousemove', handleMouseMove);
+      container.addEventListener('mousemove', handleMouseMove, { passive: true });
+      return () => {
+        container.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('resize', updateRect);
+        window.removeEventListener('scroll', updateRect);
+        cancelAnimationFrame(rafId.current);
+      };
     }
-  }, [mouseX, mouseY]);
+  }, [mouseX, mouseY, updateRect]);
 
   // Keyboard shortcut for search (Cmd+K / Ctrl+K)
   useEffect(() => {
