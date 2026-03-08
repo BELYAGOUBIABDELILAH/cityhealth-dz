@@ -22,6 +22,7 @@ const STEPS = [
 ];
 
 export default function ProviderRegister() {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const { 
     formData, 
