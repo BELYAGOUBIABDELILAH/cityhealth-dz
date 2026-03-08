@@ -469,7 +469,7 @@ export const MapSidebar = ({
 
         {/* Type Filters + Open Now toggle */}
         {(showTypeFilters || showOpenToggle) && (
-          <div className="px-2.5 py-1.5 border-b border-border/40 space-y-1.5">
+          <div className="px-2.5 py-1.5 border-b border-border/40 space-y-1.5 pointer-events-auto" onMouseDown={(e) => e.stopPropagation()}>
             {showTypeFilters && <TypeFilters />}
             {showOpenToggle && (
               <div className="flex items-center gap-2">
