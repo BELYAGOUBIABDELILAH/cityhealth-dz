@@ -1,6 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Save } from 'lucide-react';
+import { Save, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { DynamicProgressBar } from '@/components/provider/registration/DynamicProgressBar';
 import { Step1EliteIdentity } from '@/components/provider/registration/Step1EliteIdentity';
 import { Step2BasicInfo } from '@/components/provider/registration/Step2BasicInfo';
