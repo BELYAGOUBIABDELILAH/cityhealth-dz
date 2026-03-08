@@ -4,13 +4,11 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, User, ArrowLeft, Mail, Lock, Eye, EyeOff, Heart, MapPin, Shield, CheckCircle2 } from 'lucide-react';
+import { Loader2, User, ArrowLeft, Mail, Lock, Eye, EyeOff, Heart, MapPin, Shield } from 'lucide-react';
 import { z } from 'zod';
 import { toast } from 'sonner';
-import { sendPasswordResetEmail } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 const features = [
   { icon: MapPin, title: 'Trouvez un médecin', desc: 'Localisez les professionnels de santé près de chez vous sur la carte' },
@@ -23,9 +21,6 @@ const CitizenLoginPage = () => {
   const { loginAsCitizen, loginWithGoogle, isAuthenticated, profile, isLoading: authLoading } = useAuth();
   const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const [forgotEmail, setForgotEmail] = useState('');
-  const [forgotEmailSent, setForgotEmailSent] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   
   const [email, setEmail] = useState('');
@@ -75,27 +70,6 @@ const CitizenLoginPage = () => {
     }
   };
 
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!forgotEmail) {
-      toast.error(t('loginPage', 'invalidEmail'));
-      return;
-    }
-    setIsLoading(true);
-    try {
-      await sendPasswordResetEmail(auth, forgotEmail);
-      setForgotEmailSent(true);
-      toast.success(t('loginPage', 'resetSent'));
-    } catch (error: any) {
-      if (error.code === 'auth/user-not-found') {
-        toast.error(t('loginPage', 'noAccountForEmail'));
-      } else {
-        toast.error(t('loginPage', 'sendError'));
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   if (authLoading) {
     return (
@@ -211,67 +185,9 @@ const CitizenLoginPage = () => {
             </Link>
           </div>
 
-          <AnimatePresence mode="wait">
-            {showForgotPassword ? (
-              <motion.div
-                key="forgot"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.3 }}
-                className="space-y-6"
-              >
-                <div className="space-y-2">
-                  <h2 className="text-2xl font-bold tracking-tight">{t('loginPage', 'forgotPasswordTitle')}</h2>
-                  <p className="text-muted-foreground text-sm">
-                    {forgotEmailSent ? t('loginPage', 'resetSent') : 'Entrez votre email pour recevoir un lien de réinitialisation'}
-                  </p>
-                </div>
-
-                {forgotEmailSent ? (
-                  <div className="space-y-4">
-                    <div className="p-5 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800 rounded-xl flex items-start gap-3">
-                      <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
-                      <p className="text-sm text-emerald-900 dark:text-emerald-100">{t('loginPage', 'checkInbox')}</p>
-                    </div>
-                    <Button variant="outline" className="w-full h-11" onClick={() => { setShowForgotPassword(false); setForgotEmailSent(false); setForgotEmail(''); }}>
-                      {t('loginPage', 'backToLogin')}
-                    </Button>
-                  </div>
-                ) : (
-                  <form onSubmit={handleForgotPassword} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="forgot-email">{t('auth', 'email')}</Label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="forgot-email"
-                          type="email"
-                          placeholder="votre@email.com"
-                          value={forgotEmail}
-                          onChange={(e) => setForgotEmail(e.target.value)}
-                          className="pl-10 h-11"
-                          required
-                        />
-                      </div>
-                    </div>
-                    <Button type="submit" className="w-full h-11" disabled={isLoading}>
-                      {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                      {t('loginPage', 'sendLink')}
-                    </Button>
-                    <Button type="button" variant="ghost" className="w-full" onClick={() => setShowForgotPassword(false)}>
-                      <ArrowLeft className="h-4 w-4 mr-2" />
-                      {t('common', 'back')}
-                    </Button>
-                  </form>
-                )}
-              </motion.div>
-            ) : (
-              <motion.div
-                key="login"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
+          <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
                 className="space-y-6"
               >
@@ -317,13 +233,12 @@ const CitizenLoginPage = () => {
                   >
                     <div className="flex items-center justify-between">
                       <Label htmlFor="password" className="text-sm font-medium">{t('auth', 'password')}</Label>
-                      <button
-                        type="button"
-                        onClick={() => setShowForgotPassword(true)}
+                      <Link
+                        to="/forgot-password"
                         className="text-xs text-primary hover:underline font-medium"
                       >
                         {t('loginPage', 'forgotPassword')}
-                      </button>
+                      </Link>
                     </div>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -392,8 +307,6 @@ const CitizenLoginPage = () => {
                   </Link>
                 </div>
               </motion.div>
-            )}
-          </AnimatePresence>
         </motion.div>
       </div>
     </div>
