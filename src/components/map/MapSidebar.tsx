@@ -81,10 +81,14 @@ export const MapSidebar = ({
   // Read current filters from URL
   const searchQuery = searchParams.get('q') || '';
   const typesParam = searchParams.get('types');
+  const openOnly = searchParams.get('open') === '1';
   const activeTypes = useMemo(() => {
     if (!typesParam) return new Set<ProviderType>();
     return new Set(typesParam.split(',') as ProviderType[]);
   }, [typesParam]);
+
+  const showTypeFilters = mode === 'providers';
+  const showOpenToggle = mode === 'providers';
 
   // Update URL params
   const updateParam = useCallback((key: string, value: string | null) => {
