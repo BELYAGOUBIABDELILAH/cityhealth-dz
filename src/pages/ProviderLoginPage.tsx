@@ -18,7 +18,7 @@ const features = [
 
 const ProviderLoginPage = () => {
   const navigate = useNavigate();
-  const { loginAsProvider, loginWithGoogle, isAuthenticated, profile, isLoading: authLoading } = useAuth();
+  const { loginAsProvider, isAuthenticated, profile, isLoading: authLoading } = useAuth();
   const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
