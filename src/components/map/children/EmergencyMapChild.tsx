@@ -14,6 +14,7 @@ import { useProviderDistances } from '@/hooks/useProviderDistances';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 
 const EmergencyMapChild = () => {
+  const [searchParams] = useSearchParams();
   const {
     mapRef, isReady, registerMarkerLayer, removeMarkerLayer,
     selectedProvider, setSelectedProvider, flyTo, geolocation,
@@ -22,7 +23,6 @@ const EmergencyMapChild = () => {
   const { language } = useLanguage();
   const { data: providers = [], isLoading } = useEmergencyProviders();
   
-  // Marker refs for optimization - prevent recreation on selection change
   const markerGroupRef = useRef<L.MarkerClusterGroup | null>(null);
   const markersMapRef = useRef<Map<string, L.Marker>>(new Map());
   
@@ -31,10 +31,25 @@ const EmergencyMapChild = () => {
     ar: 'للحالات الطارئة، اتصل فوراً بـ 15 (سامو) أو 14.',
     en: 'For life-threatening emergencies, immediately call 15 (SAMU) or 14.'
   };
+
+  // Search filtering
+  const searchQuery = searchParams.get('q') || '';
+  const debouncedSearch = useDebouncedValue(searchQuery, 300);
+
+  const filteredProviders = useMemo(() => {
+    if (!debouncedSearch) return providers;
+    const q = debouncedSearch.toLowerCase();
+    return providers.filter(p =>
+      p.name.toLowerCase().includes(q) ||
+      (p.specialty || '').toLowerCase().includes(q) ||
+      p.address.toLowerCase().includes(q) ||
+      p.type.toLowerCase().includes(q)
+    );
+  }, [providers, debouncedSearch]);
   
   // Use shared distance hook
   const { distances, sortedProviders } = useProviderDistances(
-    providers,
+    filteredProviders,
     geolocation.latitude,
     geolocation.longitude
   );
