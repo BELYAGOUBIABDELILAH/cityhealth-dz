@@ -1,53 +1,50 @@
 
 
-# Plan: Add Real Pricing to Tarifs Section
+## Analysis
 
-## Current State
-All three plans display "0 DA" or "Gratuit" with the "Free for 1st year" badge. No actual post-trial pricing is shown.
+After reviewing the codebase, here's the current state:
 
-## Proposed Pricing (Algerian Market)
+### 1. Developer Email Verification (Already Supabase-based)
+The developer portal uses **Supabase Auth** (not Firebase), as established in a previous migration. The current flow:
+- `DeveloperRegisterPage.tsx` calls `supabase.auth.signUp()` with `emailRedirectTo: /developers/login`
+- `DeveloperLoginPage.tsx` already handles the email confirmation callback (lines 20-41), detects `access_token` in the URL hash, and redirects to `/developers/dashboard`
+- `DeveloperDashboardPage.tsx` uses `supabase.auth.getSession()` to gate access
 
-| Plan | Monthly | Annual (−20%) |
-|------|---------|---------------|
-| **Basic** | Gratuit | Gratuit |
-| **Standard** | 2 500 DA | 24 000 DA/an |
-| **Premium** | 4 900 DA | 47 000 DA/an |
+**Issue**: The user mentions Firebase's `createUserWithEmailAndPassword` and Firestore `developers` collection, but the developer portal was intentionally migrated to Supabase to avoid Firebase domain authorization errors on preview environments. The current Supabase flow is correct and functional.
 
-**Rationale:**
-- Basic stays free to maximize adoption
-- Standard at ~$17/month is competitive for growing practices
-- Premium at ~$33/month provides margin while staying accessible
-- Annual discount is pre-built (20% off)
+**What actually needs fixing**: The redirect URL should point to `/developers/dashboard` directly (not `/developers/login`) so that after email confirmation, the user lands on the dashboard automatically. The login page callback handler works but adds an unnecessary intermediary step.
 
-## Implementation
+### 2. Firebase Cron Sync Script
+Create `scripts/firebase-cron-sync.js` containing a Firebase Scheduled Cloud Function using `functions.pubsub.schedule('every 24 hours')` that:
+- Queries Firestore for verified providers
+- Maps to public fields
+- POSTs to the `sync-provider` edge function
 
-**File:** `src/components/homepage/PricingSection.tsx`
+### 3. Dev-Tools "Force Sync" Label
+Update the sync card in `DevToolsPage.tsx` to clearly indicate it's a manual "Force Sync" distinct from the automated 24h cycle.
 
-Update the `plans` array (lines 57-106):
+## Plan
 
-```typescript
-{
-  name: 'Standard',
-  monthlyPrice: { fr: '2 500 DA', ar: '2,500 د.ج', en: '2,500 DA' },
-  annualPrice: { fr: '24 000 DA', ar: '24,000 د.ج', en: '24,000 DA' },
-  // ...
-},
-{
-  name: 'Premium',
-  monthlyPrice: { fr: '4 900 DA', ar: '4,900 د.ج', en: '4,900 DA' },
-  annualPrice: { fr: '47 000 DA', ar: '47,000 د.ج', en: '47,000 DA' },
-  // ...
-}
-```
+### Task 1: Fix Developer Email Redirect
+**File**: `src/pages/developers/DeveloperRegisterPage.tsx`
+- Change `emailRedirectTo` from `/developers/login` to `/developers/dashboard`
+- Same change in the resend handler
+- This way, after clicking the confirmation link, the user lands directly on their dashboard
 
-**Also update** `src/components/provider/SubscriptionCard.tsx` to reflect the same pricing in the upgrade modal.
+**File**: `src/pages/developers/DeveloperDashboardPage.tsx`
+- Add URL hash detection (same pattern as login page) to handle the email confirmation token exchange when users land directly on the dashboard from the email link
 
----
+### Task 2: Create Firebase Cron Sync Script
+**New file**: `scripts/firebase-cron-sync.js`
+- Complete Node.js Firebase Cloud Function using `functions.pubsub.schedule('every 24 hours')`
+- Fetches verified providers from Firestore
+- Maps to safe public fields matching the `providers_public` schema
+- POSTs batch to `/functions/v1/sync-provider` with `x-sync-secret`
+- Includes deployment instructions as comments
 
-## Files to Modify
-
-| File | Change |
-|------|--------|
-| `src/components/homepage/PricingSection.tsx` | Update Standard & Premium prices |
-| `src/components/provider/SubscriptionCard.tsx` | Update "0 DA" badge to show actual price after trial |
+### Task 3: Update Dev-Tools Sync Button
+**File**: `src/pages/DevToolsPage.tsx`
+- Rename the card title to "Force Sync — API Publique"
+- Update description to explain this is for immediate updates outside the 24h automated cycle
+- Add a small info note about the automated cron schedule
 
