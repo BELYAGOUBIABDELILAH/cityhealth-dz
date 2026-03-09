@@ -35,8 +35,12 @@ const AntigravityIndex = () => {
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
-      <AnnouncementBannerTop />
-      <AntigravityHero />
+      <ErrorBoundary fallback={null}>
+        <AnnouncementBannerTop />
+      </ErrorBoundary>
+      <ErrorBoundary fallback={null}>
+        <AntigravityHero />
+      </ErrorBoundary>
 
       <SafeSection>
         <div id="urgences">
