@@ -1,50 +1,110 @@
 
 
-## Analysis
+# Plan: Admin Report Notes System for Providers
 
-After reviewing the codebase, here's the current state:
+## Overview
+Create a bidirectional communication system where:
+1. Client reports about providers appear in the admin dashboard (already exists via `ReportsModerationPanel`)
+2. Admin can send a **report note** to the provider explaining the issue
+3. Providers see these notes in their dashboard with a notification badge
 
-### 1. Developer Email Verification (Already Supabase-based)
-The developer portal uses **Supabase Auth** (not Firebase), as established in a previous migration. The current flow:
-- `DeveloperRegisterPage.tsx` calls `supabase.auth.signUp()` with `emailRedirectTo: /developers/login`
-- `DeveloperLoginPage.tsx` already handles the email confirmation callback (lines 20-41), detects `access_token` in the URL hash, and redirects to `/developers/dashboard`
-- `DeveloperDashboardPage.tsx` uses `supabase.auth.getSession()` to gate access
+---
 
-**Issue**: The user mentions Firebase's `createUserWithEmailAndPassword` and Firestore `developers` collection, but the developer portal was intentionally migrated to Supabase to avoid Firebase domain authorization errors on preview environments. The current Supabase flow is correct and functional.
+## Database Changes
 
-**What actually needs fixing**: The redirect URL should point to `/developers/dashboard` directly (not `/developers/login`) so that after email confirmation, the user lands on the dashboard automatically. The login page callback handler works but adds an unnecessary intermediary step.
+**New table: `admin_provider_notes`**
+| Column | Type | Notes |
+|--------|------|-------|
+| id | uuid | PK |
+| provider_id | text | Target provider |
+| report_id | uuid | FK to provider_reports (nullable) |
+| admin_id | text | Admin who created the note |
+| title | text | Short title (e.g., "Report received") |
+| message | text | Full message body |
+| severity | text | 'info' | 'warning' | 'critical' |
+| is_read | boolean | Default false |
+| created_at | timestamp | |
 
-### 2. Firebase Cron Sync Script
-Create `scripts/firebase-cron-sync.js` containing a Firebase Scheduled Cloud Function using `functions.pubsub.schedule('every 24 hours')` that:
-- Queries Firestore for verified providers
-- Maps to public fields
-- POSTs to the `sync-provider` edge function
+**RLS Policies:**
+- Public read (providers read their own notes)
+- Admin insert/update
 
-### 3. Dev-Tools "Force Sync" Label
-Update the sync card in `DevToolsPage.tsx` to clearly indicate it's a manual "Force Sync" distinct from the automated 24h cycle.
+---
 
-## Plan
+## Component Changes
 
-### Task 1: Fix Developer Email Redirect
-**File**: `src/pages/developers/DeveloperRegisterPage.tsx`
-- Change `emailRedirectTo` from `/developers/login` to `/developers/dashboard`
-- Same change in the resend handler
-- This way, after clicking the confirmation link, the user lands directly on their dashboard
+### 1. Admin Side: `ReportsModerationPanel.tsx`
+- Add "Send Note" button next to each provider report row
+- Open dialog with form: Title, Message, Severity selector
+- On submit: insert into `admin_provider_notes` linking the report
 
-**File**: `src/pages/developers/DeveloperDashboardPage.tsx`
-- Add URL hash detection (same pattern as login page) to handle the email confirmation token exchange when users land directly on the dashboard from the email link
+### 2. Provider Side: `ProviderDashboard.tsx`
+- Add a **"Notifications Admin"** tab in the sidebar
+- Display list of notes from admin with:
+  - Severity badge (info/warning/critical)
+  - Title, message, date
+  - Mark as read functionality
+- Show red badge counter in sidebar when unread notes exist
 
-### Task 2: Create Firebase Cron Sync Script
-**New file**: `scripts/firebase-cron-sync.js`
-- Complete Node.js Firebase Cloud Function using `functions.pubsub.schedule('every 24 hours')`
-- Fetches verified providers from Firestore
-- Maps to safe public fields matching the `providers_public` schema
-- POSTs batch to `/functions/v1/sync-provider` with `x-sync-secret`
-- Includes deployment instructions as comments
+### 3. New Component: `AdminNotesSendDialog.tsx`
+- Modal form for admin to compose a note
+- Fields: Title, Message (textarea), Severity (select)
+- Sends to `admin_provider_notes` table
 
-### Task 3: Update Dev-Tools Sync Button
-**File**: `src/pages/DevToolsPage.tsx`
-- Rename the card title to "Force Sync — API Publique"
-- Update description to explain this is for immediate updates outside the 24h automated cycle
-- Add a small info note about the automated cron schedule
+### 4. New Component: `ProviderAdminNotifications.tsx`
+- Card displaying list of admin notes for the provider
+- Empty state when no notes
+- Click to expand and mark as read
+
+---
+
+## Technical Details
+
+**Sidebar badge (ProviderDashboard):**
+```typescript
+// Query unread admin notes count
+const { data: unreadNotes } = useQuery({
+  queryKey: ['admin-notes', providerId],
+  queryFn: () => supabase.from('admin_provider_notes')
+    .select('id', { count: 'exact' })
+    .eq('provider_id', providerId)
+    .eq('is_read', false)
+});
+```
+
+**Admin sends note:**
+```typescript
+await supabase.from('admin_provider_notes').insert({
+  provider_id,
+  report_id, // optional link to original report
+  admin_id: user.uid,
+  title,
+  message,
+  severity: 'warning',
+});
+```
+
+---
+
+## Files to Create/Modify
+
+| File | Action |
+|------|--------|
+| `supabase/migrations/...` | Create `admin_provider_notes` table |
+| `src/components/admin/AdminNotesSendDialog.tsx` | New - dialog to send note |
+| `src/components/admin/ReportsModerationPanel.tsx` | Add "Send Note" button |
+| `src/components/provider/ProviderAdminNotifications.tsx` | New - list of admin notes |
+| `src/pages/ProviderDashboard.tsx` | Add notifications tab + badge |
+
+---
+
+## Flow Summary
+
+```text
+Client → Reports Provider → Admin Dashboard
+                                ↓
+                    Admin reviews + sends note
+                                ↓
+             Provider sees note in Dashboard
+```
 
