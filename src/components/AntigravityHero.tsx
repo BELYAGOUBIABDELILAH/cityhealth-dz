@@ -63,15 +63,19 @@ export const AntigravityHero = () => {
 
   useEffect(() => {
     const fetchStats = async () => {
-      const [providersRes, reviewsRes] = await Promise.all([
-        supabase.from('providers_public').select('id', { count: 'exact', head: true }),
-        supabase.from('provider_reviews').select('rating'),
-      ]);
-      if (providersRes.count != null) setProviderCount(providersRes.count);
-      if (reviewsRes.data && reviewsRes.data.length > 0) {
-        setReviewCount(reviewsRes.data.length);
-        const avg = reviewsRes.data.reduce((s, r) => s + r.rating, 0) / reviewsRes.data.length;
-        setAvgRating(Math.round(avg * 10) / 10);
+      try {
+        const [providersRes, reviewsRes] = await Promise.all([
+          supabase.from('providers_public').select('id', { count: 'exact', head: true }),
+          supabase.from('provider_reviews').select('rating'),
+        ]);
+        if (providersRes.count != null) setProviderCount(providersRes.count);
+        if (reviewsRes.data && reviewsRes.data.length > 0) {
+          setReviewCount(reviewsRes.data.length);
+          const avg = reviewsRes.data.reduce((s, r) => s + r.rating, 0) / reviewsRes.data.length;
+          setAvgRating(Math.round(avg * 10) / 10);
+        }
+      } catch (err) {
+        console.warn('[AntigravityHero] fetchStats failed:', err);
       }
     };
     fetchStats();
