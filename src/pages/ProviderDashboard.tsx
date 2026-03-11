@@ -65,6 +65,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { ProviderArticlesManager } from '@/components/research/ProviderArticlesManager';
 import { SubscriptionCard } from '@/components/provider/SubscriptionCard';
+import { ProviderReviewsPanel } from '@/components/provider/ProviderReviewsPanel';
 
 const getWelcomeModalKey = (providerId: string) =>
   `provider_onboarding_welcome_seen_${providerId}`;
