@@ -47,6 +47,7 @@ const TAB_TITLES: Record<string, string> = {
   ads: 'Annonces',
   users: 'Utilisateurs',
   contact: 'Messages de contact',
+  reviews: 'Gestion des avis',
   analytics: 'Analytiques',
   audit: 'Journal d\'audit',
   reports: 'Signalements',
