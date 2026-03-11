@@ -2840,6 +2840,10 @@ export default function ProviderDashboard() {
           <TabsContent value="analytics">
             <AnalyticsCharts providerId={providerData?.id || ''} providerUserId={user?.uid || ''} />
           </TabsContent>
+
+          <TabsContent value="reviews-panel">
+            <ProviderReviewsPanel providerId={providerData?.id || ''} reporterId={user?.uid || ''} />
+          </TabsContent>
         </Tabs>
 
         {/* Settings Modal */}
