@@ -292,6 +292,9 @@ export default function AdminDashboard() {
       case 'contact':
         return <ContactMessagesPanel />;
       
+      case 'reviews':
+        return <AdminReviewsPanel />;
+      
       case 'analytics':
         return <AdminAnalyticsCharts />;
       

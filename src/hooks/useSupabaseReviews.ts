@@ -182,7 +182,7 @@ export function useReviewReports() {
         .select('*')
         .order('created_at', { ascending: false });
       if (error) throw error;
-      return (data || []) as ReviewReport[];
+      return (data || []) as unknown as ReviewReport[];
     },
   });
 }

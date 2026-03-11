@@ -24,6 +24,7 @@ import { useFavorites } from '@/hooks/useFavorites';
 import { useMyOffers } from '@/hooks/useProvide';
 import { PostAppointmentReviewWidget } from '@/components/appointments/PostAppointmentReviewWidget';
 import { DashboardEmptyState } from '@/components/citizen/DashboardEmptyState';
+import { PatientReviewsManager } from '@/components/patient/PatientReviewsManager';
 import { Appointment } from '@/types/appointments';
 import { PROVIDE_STATUS_KEYS } from '@/types/provide';
 import { toast } from 'sonner';
