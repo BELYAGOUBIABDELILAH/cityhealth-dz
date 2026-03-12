@@ -21,8 +21,9 @@ createRoot(document.getElementById("root")!).render(
   </React.StrictMode>
 );
 
-// Register service worker asynchronously to avoid render-blocking
-if ('serviceWorker' in navigator) {
+// Register service worker asynchronously to avoid render-blocking.
+// Important: don't register in dev, otherwise stale cached chunks can break Vite dynamic imports.
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
     try {
       const reg = await navigator.serviceWorker.register('/sw.js', { scope: '/' });

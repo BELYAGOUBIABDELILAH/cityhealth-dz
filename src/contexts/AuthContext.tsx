@@ -182,16 +182,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       if (firebaseUser) {
-        // Block unverified citizen users - they must confirm email first
-        if (!firebaseUser.emailVerified) {
-          // Sign them out and don't set profile
-          await firebaseSignOut(auth);
-          setUser(null);
-          setProfile(null);
-          setIsLoading(false);
-          return;
+        // Refresh auth snapshot to get up-to-date emailVerified.
+        // Without this, a recent verification can still appear as false and trigger a sign-out.
+        try {
+          // Force a token refresh first (helps when server-side state changed recently)
+          await firebaseUser.getIdToken(true);
+          await firebaseUser.reload();
+        } catch (reloadError) {
+          console.warn('Could not reload Firebase user:', reloadError);
         }
 
+        // IMPORTANT:
+        // Do NOT sign out globally when emailVerified=false.
+        // We enforce email verification in the citizen login flow instead.
+        // We still need to fetch the profile for unverified users (like admins/providers).
         setUser(firebaseUser);
         // Fetch profile when user signs in
         setTimeout(() => {
@@ -257,15 +261,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     try {
       const { user: loggedInUser } = await signInWithEmailAndPassword(auth, email, password);
-      
+      // Refresh token so emailVerified reflects server state (fixes false "confirmer votre email")
+      await loggedInUser.getIdToken(true);
+      await loggedInUser.reload();
+      const currentUser = auth.currentUser;
+      console.log('[loginAsCitizen] emailVerified after refresh:', currentUser?.emailVerified);
+
       // Check email verification
-      if (!loggedInUser.emailVerified) {
+      if (!currentUser?.emailVerified) {
         await firebaseSignOut(auth);
         toast.error('Veuillez d\'abord confirmer votre email avant de vous connecter.');
         throw new Error('Email not verified');
       }
       // Verify user type - allow if document doesn't exist (new user) or is citizen
-      const userDoc = await getDoc(doc(db, 'users', loggedInUser.uid));
+      const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
       if (userDoc.exists()) {
         const userType = userDoc.data().userType;
         if (userType !== 'citizen') {
@@ -275,7 +284,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       } else {
         // Create user document if it doesn't exist (legacy user or first login)
-        await createUserDocument(loggedInUser.uid, email, 'citizen');
+        await createUserDocument(currentUser.uid, email, 'citizen');
       }
       
       toast.success('Bienvenue sur CityHealth!');
@@ -342,6 +351,42 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     try {
       const { user: loggedInUser } = await signInWithEmailAndPassword(auth, email, password);
+      await loggedInUser.getIdToken(true);
+      await loggedInUser.reload();
+
+      // Bootstrap path: if this is the configured bootstrap admin email, ensure required docs exist
+      if ((loggedInUser.email || '').toLowerCase() === 'admin@test.com') {
+        const uid = loggedInUser.uid;
+        const userRef = doc(db, 'users', uid);
+        const userSnap = await getDoc(userRef);
+        if (!userSnap.exists()) {
+          await setDoc(userRef, { email: loggedInUser.email, userType: 'admin', createdAt: serverTimestamp() });
+        } else if (userSnap.data().userType !== 'admin') {
+          await setDoc(userRef, { userType: 'admin' }, { merge: true });
+        }
+
+        // Create admin role doc (requires bootstrap rule)
+        const roleRef = doc(db, 'user_roles', `${uid}_admin`);
+        const roleSnap = await getDoc(roleRef);
+        if (!roleSnap.exists()) {
+          await setDoc(roleRef, { user_id: uid, role: 'admin', created_at: serverTimestamp() });
+        }
+
+        // Create admin profile doc with id=uid (requires bootstrap rule)
+        const adminProfileRef = doc(db, 'admin_profiles', uid);
+        const adminProfileSnap = await getDoc(adminProfileRef);
+        if (!adminProfileSnap.exists()) {
+          await setDoc(adminProfileRef, {
+            email: loggedInUser.email,
+            fullName: 'admin',
+            role: 'moderator',
+            permissions: ['manage_providers', 'manage_ads', 'view_analytics', 'view_audit_logs'],
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+            preferences: { theme: 'light', language: 'fr', emailNotifications: true, pushNotifications: true },
+          });
+        }
+      }
       
       // Verify user type
       const userDoc = await getDoc(doc(db, 'users', loggedInUser.uid));

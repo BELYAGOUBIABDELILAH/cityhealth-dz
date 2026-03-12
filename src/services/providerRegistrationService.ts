@@ -47,13 +47,18 @@ export async function createProviderFromRegistration(
       userId = auth.currentUser.uid;
       
       // Check if provider already exists for this user
-      const existingProvider = await getExistingProvider(userId);
-      if (existingProvider) {
-        return {
-          success: false,
-          error: 'Un compte professionnel existe déjà pour cet utilisateur. Veuillez vous connecter à votre espace professionnel.',
-          providerId: existingProvider
-        };
+      try {
+        const existingProvider = await getExistingProvider(userId);
+        if (existingProvider) {
+          return {
+            success: false,
+            error: 'Un compte professionnel existe déjà pour cet utilisateur. Veuillez vous connecter à votre espace professionnel.',
+            providerId: existingProvider
+          };
+        }
+      } catch (err: any) {
+        console.error('[provider-registration:getExistingProvider]', err?.code || err?.message, err);
+        throw err;
       }
     } else {
       // Create new Firebase Auth account
@@ -83,38 +88,52 @@ export async function createProviderFromRegistration(
 
     // Create Firestore profile
     const profileRef = doc(db, 'profiles', userId);
-    const profileSnap = await getDoc(profileRef);
-    
-    if (!profileSnap.exists()) {
-      await setDoc(profileRef, {
-        id: userId,
-        email: formData.email,
-        full_name: formData.contactPersonName || formData.facilityNameFr,
-        avatar_url: formData.logoPreview || null,
-        created_at: Timestamp.now(),
-        updated_at: Timestamp.now()
-      });
+    try {
+      const profileSnap = await getDoc(profileRef);
+      if (!profileSnap.exists()) {
+        await setDoc(profileRef, {
+          id: userId,
+          email: formData.email,
+          full_name: formData.contactPersonName || formData.facilityNameFr,
+          avatar_url: formData.logoPreview || null,
+          created_at: Timestamp.now(),
+          updated_at: Timestamp.now()
+        });
+      }
+    } catch (err: any) {
+      console.error('[provider-registration:profiles]', err?.code || err?.message, err);
+      throw err;
     }
 
     // Assign 'provider' role (won't duplicate if exists)
-    await assignProviderRole(userId);
+    try {
+      await assignProviderRole(userId);
+    } catch (err: any) {
+      console.error('[provider-registration:user_roles]', err?.code || err?.message, err);
+      throw err;
+    }
 
     // Create canonical /users/{uid} document for AuthContext compatibility
     const userRef = doc(db, 'users', userId);
-    const userSnap = await getDoc(userRef);
-    if (!userSnap.exists()) {
-      await setDoc(userRef, {
-        email: formData.email,
-        userType: 'provider',
-        createdAt: Timestamp.now(),
-      });
-    } else {
-      // If user doc exists (e.g. was a citizen), update to provider type
-      // Only update if not already provider to avoid overwriting admin
-      const existingType = userSnap.data().userType;
-      if (existingType !== 'provider' && existingType !== 'admin') {
-        await setDoc(userRef, { userType: 'provider' }, { merge: true });
+    try {
+      const userSnap = await getDoc(userRef);
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          email: formData.email,
+          userType: 'provider',
+          createdAt: Timestamp.now(),
+        });
+      } else {
+        // If user doc exists (e.g. was a citizen), update to provider type
+        // Only update if not already provider to avoid overwriting admin
+        const existingType = userSnap.data().userType;
+        if (existingType !== 'provider' && existingType !== 'admin') {
+          await setDoc(userRef, { userType: 'provider' }, { merge: true });
+        }
       }
+    } catch (err: any) {
+      console.error('[provider-registration:users]', err?.code || err?.message, err);
+      throw err;
     }
 
     // Generate provider ID
@@ -140,7 +159,12 @@ export async function createProviderFromRegistration(
     }
 
     // Create provider document with cloud URLs
-    await createProviderDocument(providerId, userId, { ...formData, logoPreview: logoUrl || '', galleryPreviews: galleryUrls });
+    try {
+      await createProviderDocument(providerId, userId, { ...formData, logoPreview: logoUrl || '', galleryPreviews: galleryUrls });
+    } catch (err: any) {
+      console.error('[provider-registration:providers]', err?.code || err?.message, err);
+      throw err;
+    }
 
     return {
       success: true,

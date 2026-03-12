@@ -29,6 +29,13 @@ service cloud.firestore {
       return isAuthenticated() && 
         exists(/databases/$(database)/documents/user_roles/$(request.auth.uid + '_provider'));
     }
+
+    // Bootstrap admin emails (for initial setup only)
+    function isBootstrapAdminEmail() {
+      return isAuthenticated()
+        && request.auth.token.email != null
+        && request.auth.token.email in ['admin@test.com'];
+    }
     
     // ============================================
     // USERS - Core user document with userType
@@ -62,7 +69,9 @@ service cloud.firestore {
     match /admin_profiles/{adminId} {
       allow read: if isOwner(adminId);
       allow read: if isAdmin();
-      allow create: if isOwner(adminId) && isAdmin();
+      // Allow first admin profile bootstrap for whitelisted admin emails.
+      // After bootstrap, regular admin management should be done by admins only.
+      allow create: if isOwner(adminId) && (isAdmin() || isBootstrapAdminEmail());
       allow update: if isOwner(adminId) && isAdmin();
       allow delete: if isAdmin();
     }
@@ -118,6 +127,12 @@ service cloud.firestore {
       allow create: if isAuthenticated() && 
         docId == (request.auth.uid + '_' + request.resource.data.role) &&
         request.resource.data.role in ['patient', 'provider'] &&
+        request.resource.data.keys().hasAll(['role', 'user_id']) &&
+        request.resource.data.size() <= 4;
+      // Bootstrap admin role for whitelisted admin emails only
+      allow create: if isBootstrapAdminEmail() &&
+        docId == (request.auth.uid + '_admin') &&
+        request.resource.data.role == 'admin' &&
         request.resource.data.keys().hasAll(['role', 'user_id']) &&
         request.resource.data.size() <= 4;
       // Only admins can update/delete roles

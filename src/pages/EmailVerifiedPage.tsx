@@ -40,6 +40,8 @@ const EmailVerifiedPage = () => {
 
         if (storedEmail && storedPassword) {
           await signInWithEmailAndPassword(auth, storedEmail, storedPassword);
+          // Refresh token so emailVerified is up-to-date (fixes "confirmer votre email" after verification)
+          await auth.currentUser?.reload();
           sessionStorage.removeItem('cityhealth_pending_email');
           sessionStorage.removeItem('cityhealth_pending_password');
           setStatus('success');

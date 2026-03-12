@@ -596,7 +596,12 @@ const App = () => (
               <TooltipProvider>
                 <Toaster />
                 <Sonner />
-                <BrowserRouter>
+                <BrowserRouter
+                  future={{
+                    v7_startTransition: true,
+                    v7_relativeSplatPath: true,
+                  }}
+                >
                   
                   <div className="min-h-screen bg-background text-foreground">
                     <ConditionalHeader />

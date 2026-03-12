@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { applyActionCode, getAuth } from 'firebase/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,6 +19,7 @@ const features = [
 
 const CitizenLoginPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { loginAsCitizen, loginWithGoogle, isAuthenticated, profile, isLoading: authLoading } = useAuth();
   const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
@@ -39,6 +41,36 @@ const CitizenLoginPage = () => {
       toast.error(t('loginPage', 'notCitizenAccount'));
     }
   }, [isAuthenticated, profile, navigate, t]);
+
+  // Handle Firebase email verification links that land on /citizen/login
+  useEffect(() => {
+    const mode = searchParams.get('mode');
+    const oobCode = searchParams.get('oobCode');
+    if (mode !== 'verifyEmail' || !oobCode) return;
+
+    const run = async () => {
+      try {
+        setIsLoading(true);
+        const auth = getAuth();
+        await applyActionCode(auth, oobCode);
+        toast.success('Email vérifié ! Vous pouvez vous connecter.');
+
+        const continueUrl = searchParams.get('continueUrl');
+        if (continueUrl) {
+          window.location.replace(continueUrl);
+          return;
+        }
+        navigate('/email-verified', { replace: true });
+      } catch (err: any) {
+        console.error('[verifyEmail] applyActionCode failed:', err?.code || err?.message, err);
+        toast.error("Impossible de vérifier l'email. Le lien est peut-être expiré.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    run();
+  }, [navigate, searchParams]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
