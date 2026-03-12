@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
-import { 
+import {
   User,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -9,16 +9,16 @@ import {
   updateProfile as firebaseUpdateProfile,
   sendEmailVerification
 } from 'firebase/auth';
-import { 
-  doc, 
-  setDoc, 
-  getDoc, 
-  updateDoc, 
-  collection, 
-  query, 
-  where, 
+import {
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  collection,
+  query,
+  where,
   getDocs,
-  serverTimestamp 
+  serverTimestamp
 } from 'firebase/firestore';
 import { auth, db, googleProvider } from '@/lib/firebase';
 import { toast } from 'sonner';
@@ -86,7 +86,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const userRef = doc(db, 'users', userId);
       const userSnap = await getDoc(userRef);
       let userType: UserType = 'citizen'; // Default
-      
+
       if (userSnap.exists()) {
         userType = userSnap.data().userType || 'citizen';
       }
@@ -105,7 +105,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           created_at: serverTimestamp(),
           updated_at: serverTimestamp()
         });
-        
+
         setProfile({
           id: userId,
           email: userEmail,
@@ -223,13 +223,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Helper function to create type-specific document
   const createTypeDocument = async (
-    userId: string, 
-    userType: UserType, 
+    userId: string,
+    userType: UserType,
     additionalData: Record<string, any> = {}
   ) => {
-    const collectionName = userType === 'citizen' ? 'citizens' : 
-                          userType === 'admin' ? 'admins' : 'providers';
-    
+    const collectionName = userType === 'citizen' ? 'citizens' :
+      userType === 'admin' ? 'admins' : 'providers';
+
     // Only create for citizens and admins here (providers are handled separately)
     if (userType === 'citizen' || userType === 'admin') {
       await setDoc(doc(db, collectionName, userId), {
@@ -286,7 +286,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         // Create user document if it doesn't exist (legacy user or first login)
         await createUserDocument(currentUser.uid, email, 'citizen');
       }
-      
+
       toast.success('Bienvenue sur CityHealth!');
     } catch (error: any) {
       logError(error, 'loginAsCitizen');
@@ -307,28 +307,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.log('[loginAsProvider] Attempting login for:', email);
       const { user: loggedInUser } = await signInWithEmailAndPassword(auth, email, password);
       console.log('[loginAsProvider] Firebase Auth success, uid:', loggedInUser.uid);
-      
+
       // Verify user type - must exist and be provider
       const userDoc = await getDoc(doc(db, 'users', loggedInUser.uid));
       console.log('[loginAsProvider] User doc exists:', userDoc.exists());
-      
+
       if (!userDoc.exists()) {
         console.log('[loginAsProvider] ERROR: User document not found in Firestore');
         await firebaseSignOut(auth);
         toast.error('Compte prestataire non configuré. Veuillez d\'abord vous inscrire.');
         throw new Error('Provider account not configured');
       }
-      
+
       const userData = userDoc.data();
       console.log('[loginAsProvider] User type:', userData.userType);
-      
+
       if (userData.userType !== 'provider') {
         console.log('[loginAsProvider] ERROR: Wrong user type:', userData.userType);
         await firebaseSignOut(auth);
         toast.error(`Ce compte est de type "${userData.userType}". Utilisez la page de connexion appropriée.`);
         throw new Error('Invalid user type');
       }
-      
+
       // All verifications passed - show success
       console.log('[loginAsProvider] SUCCESS: Provider login verified');
       toast.success('Bienvenue sur votre espace prestataire!');
@@ -387,7 +387,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           });
         }
       }
-      
+
       // Verify user type
       const userDoc = await getDoc(doc(db, 'users', loggedInUser.uid));
       if (!userDoc.exists() || userDoc.data().userType !== 'admin') {
@@ -395,7 +395,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         toast.error('Accès refusé. Ce compte n\'est pas administrateur.');
         throw new Error('Invalid user type');
       }
-      
+
       toast.success('Bienvenue Administrateur!');
     } catch (error: any) {
       logError(error, 'loginAsAdmin');
@@ -414,7 +414,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     try {
       const { user: newUser } = await createUserWithEmailAndPassword(auth, email, password);
-      
+
       // Update Firebase Auth profile
       await firebaseUpdateProfile(newUser, {
         displayName: fullName
@@ -469,29 +469,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         displayName: fullName
       });
 
-      // Send email verification with redirect to /email-verified page
+      // Send email verification
       let emailSent = false;
       try {
-        // Try with continueUrl first (works when domain is whitelisted in Firebase)
-        await sendEmailVerification(newUser, {
-          url: `${window.location.origin}/email-verified`,
-        });
+        await sendEmailVerification(newUser);
         emailSent = true;
-      } catch (firstError: any) {
-        // If domain not whitelisted, retry without continueUrl
-        if (firstError?.message?.includes('UNAUTHORIZED_DOMAIN') || firstError?.code === 'auth/unauthorized-continue-uri') {
-          try {
-            await sendEmailVerification(newUser);
-            emailSent = true;
-          } catch (retryError: any) {
-            console.warn('Email verification send failed (no continueUrl):', retryError);
-            if (retryError?.code === 'auth/too-many-requests') {
-              toast.error("Compte créé, mais l'email de vérification est temporairement bloqué. Réessayez dans quelques minutes.");
-            } else {
-              toast.warning("Compte créé, mais l'email de vérification n'a pas pu être envoyé. Utilisez le bouton 'Renvoyer' sur la page suivante.");
-            }
-          }
-        } else if (firstError?.code === 'auth/too-many-requests') {
+      } catch (err: any) {
+        console.error('[signupAsCitizen] Email verification send failed:', err?.code, err?.message, err);
+        if (err?.code === 'auth/too-many-requests') {
           toast.error("Compte créé, mais l'email de vérification est temporairement bloqué. Réessayez dans quelques minutes.");
         } else {
           toast.warning("Compte créé, mais l'email de vérification n'a pas pu être envoyé. Utilisez le bouton 'Renvoyer' sur la page suivante.");
@@ -548,15 +533,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      
+
       // Check if user document exists
       const userRef = doc(db, 'users', result.user.uid);
       const userSnap = await getDoc(userRef);
-      
+
       if (!userSnap.exists()) {
         // New user - create all documents
         await createUserDocument(result.user.uid, result.user.email || '', userType);
-        
+
         await setDoc(doc(db, 'profiles', result.user.uid), {
           id: result.user.uid,
           email: result.user.email,
@@ -636,7 +621,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (user.email) {
         await fetchUserProfile(user.uid, user.email);
       }
-      
+
       toast.success('Profil mis à jour');
     } catch (error) {
       logError(error, 'updateProfile');
